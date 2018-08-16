@@ -1,0 +1,196 @@
+# Copyright (c) 2018 TopCoder, Inc. All rights reserved.
+#
+# author: TCSDEVELOPER
+# version: 1.0
+
+version: '2'
+
+services:
+
+  orderer.topcoder.com:
+    container_name: orderer.topcoder.com
+    image: hyperledger/fabric-orderer:$IMAGE_TAG
+    environment:
+      - ORDERER_GENERAL_LOGLEVEL=INFO
+      - ORDERER_GENERAL_LISTENADDRESS=0.0.0.0
+      - ORDERER_GENERAL_GENESISMETHOD=file
+      - ORDERER_GENERAL_GENESISFILE=/var/hyperledger/orderer/orderer.genesis.block
+      - ORDERER_GENERAL_LOCALMSPID=OrdererMSP
+      - ORDERER_GENERAL_LOCALMSPDIR=/var/hyperledger/orderer/msp
+      # enabled TLS
+      - ORDERER_GENERAL_TLS_ENABLED=true
+      - ORDERER_GENERAL_TLS_PRIVATEKEY=/var/hyperledger/orderer/tls/server.key
+      - ORDERER_GENERAL_TLS_CERTIFICATE=/var/hyperledger/orderer/tls/server.crt
+      - ORDERER_GENERAL_TLS_ROOTCAS=[/var/hyperledger/orderer/tls/ca.crt]
+    working_dir: /opt/gopath/src/github.com/hyperledger/fabric
+    command: orderer
+    volumes:
+    - ../channel-artifacts/genesis.block:/var/hyperledger/orderer/orderer.genesis.block
+    - ../crypto-config/ordererOrganizations/topcoder.com/orderers/orderer.topcoder.com/msp:/var/hyperledger/orderer/msp
+    - ../crypto-config/ordererOrganizations/topcoder.com/orderers/orderer.topcoder.com/tls/:/var/hyperledger/orderer/tls
+    - orderer.topcoder.com:/var/hyperledger/production/orderer
+    ports:
+      - 7050:7050
+
+  peer0.topcoder.topcoder.com:
+    container_name: peer0.topcoder.topcoder.com
+    extends:
+      file: peer-base.yaml
+      service: peer-base
+    environment:
+      - CORE_PEER_ID=peer0.topcoder.topcoder.com
+      - CORE_PEER_ADDRESS=peer0.topcoder.topcoder.com:7051
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer1.topcoder.topcoder.com:7051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.topcoder.topcoder.com:7051
+      - CORE_PEER_LOCALMSPID=TopcoderMSP
+    volumes:
+        - /var/run/:/host/var/run/
+        - ../crypto-config/peerOrganizations/topcoder.topcoder.com/peers/peer0.topcoder.topcoder.com/msp:/etc/hyperledger/fabric/msp
+        - ../crypto-config/peerOrganizations/topcoder.topcoder.com/peers/peer0.topcoder.topcoder.com/tls:/etc/hyperledger/fabric/tls
+        - peer0.topcoder.topcoder.com:/var/hyperledger/production
+    ports:
+      - 7051:7051
+      - 7053:7053
+
+  peer1.topcoder.topcoder.com:
+    container_name: peer1.topcoder.topcoder.com
+    extends:
+      file: peer-base.yaml
+      service: peer-base
+    environment:
+      - CORE_PEER_ID=peer1.topcoder.topcoder.com
+      - CORE_PEER_ADDRESS=peer1.topcoder.topcoder.com:7051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer1.topcoder.topcoder.com:7051
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.topcoder.topcoder.com:7051
+      - CORE_PEER_LOCALMSPID=TopcoderMSP
+    volumes:
+        - /var/run/:/host/var/run/
+        - ../crypto-config/peerOrganizations/topcoder.topcoder.com/peers/peer1.topcoder.topcoder.com/msp:/etc/hyperledger/fabric/msp
+        - ../crypto-config/peerOrganizations/topcoder.topcoder.com/peers/peer1.topcoder.topcoder.com/tls:/etc/hyperledger/fabric/tls
+        - peer1.topcoder.topcoder.com:/var/hyperledger/production
+
+    ports:
+      - 8051:7051
+      - 8053:7053
+
+  peer0.clients.topcoder.com:
+    container_name: peer0.clients.topcoder.com
+    extends:
+      file: peer-base.yaml
+      service: peer-base
+    environment:
+      - CORE_PEER_ID=peer0.clients.topcoder.com
+      - CORE_PEER_ADDRESS=peer0.clients.topcoder.com:7051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.clients.topcoder.com:7051
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer1.clients.topcoder.com:7051
+      - CORE_PEER_LOCALMSPID=ClientsMSP
+    volumes:
+        - /var/run/:/host/var/run/
+        - ../crypto-config/peerOrganizations/clients.topcoder.com/peers/peer0.clients.topcoder.com/msp:/etc/hyperledger/fabric/msp
+        - ../crypto-config/peerOrganizations/clients.topcoder.com/peers/peer0.clients.topcoder.com/tls:/etc/hyperledger/fabric/tls
+        - peer0.clients.topcoder.com:/var/hyperledger/production
+    ports:
+      - 9051:7051
+      - 9053:7053
+
+  peer1.clients.topcoder.com:
+    container_name: peer1.clients.topcoder.com
+    extends:
+      file: peer-base.yaml
+      service: peer-base
+    environment:
+      - CORE_PEER_ID=peer1.clients.topcoder.com
+      - CORE_PEER_ADDRESS=peer1.clients.topcoder.com:7051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer1.clients.topcoder.com:7051
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.clients.topcoder.com:7051
+      - CORE_PEER_LOCALMSPID=ClientsMSP
+    volumes:
+        - /var/run/:/host/var/run/
+        - ../crypto-config/peerOrganizations/clients.topcoder.com/peers/peer1.clients.topcoder.com/msp:/etc/hyperledger/fabric/msp
+        - ../crypto-config/peerOrganizations/clients.topcoder.com/peers/peer1.clients.topcoder.com/tls:/etc/hyperledger/fabric/tls
+        - peer1.clients.topcoder.com:/var/hyperledger/production
+    ports:
+      - 10051:7051
+      - 10053:7053
+
+
+
+  peer0.members.topcoder.com:
+    container_name: peer0.members.topcoder.com
+    extends:
+      file: peer-base.yaml
+      service: peer-base
+    environment:
+      - CORE_PEER_ID=peer0.members.topcoder.com
+      - CORE_PEER_ADDRESS=peer0.members.topcoder.com:7051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.members.topcoder.com:7051
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer1.members.topcoder.com:7051
+      - CORE_PEER_LOCALMSPID=MembersMSP
+    volumes:
+        - /var/run/:/host/var/run/
+        - ../crypto-config/peerOrganizations/members.topcoder.com/peers/peer0.members.topcoder.com/msp:/etc/hyperledger/fabric/msp
+        - ../crypto-config/peerOrganizations/members.topcoder.com/peers/peer0.members.topcoder.com/tls:/etc/hyperledger/fabric/tls
+        - peer0.members.topcoder.com:/var/hyperledger/production
+    ports:
+      - 11051:7051
+      - 11053:7053
+
+  peer1.members.topcoder.com:
+    container_name: peer1.members.topcoder.com
+    extends:
+      file: peer-base.yaml
+      service: peer-base
+    environment:
+      - CORE_PEER_ID=peer1.members.topcoder.com
+      - CORE_PEER_ADDRESS=peer1.members.topcoder.com:7051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer1.members.topcoder.com:7051
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.members.topcoder.com:7051
+      - CORE_PEER_LOCALMSPID=MembersMSP
+    volumes:
+        - /var/run/:/host/var/run/
+        - ../crypto-config/peerOrganizations/members.topcoder.com/peers/peer1.members.topcoder.com/msp:/etc/hyperledger/fabric/msp
+        - ../crypto-config/peerOrganizations/members.topcoder.com/peers/peer1.members.topcoder.com/tls:/etc/hyperledger/fabric/tls
+        - peer1.members.topcoder.com:/var/hyperledger/production
+    ports:
+      - 12051:7051
+      - 12053:7053
+
+  peer0.moderators.topcoder.com:
+    container_name: peer0.moderators.topcoder.com
+    extends:
+      file: peer-base.yaml
+      service: peer-base
+    environment:
+      - CORE_PEER_ID=peer0.moderators.topcoder.com
+      - CORE_PEER_ADDRESS=peer0.moderators.topcoder.com:7051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.moderators.topcoder.com:7051
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer1.moderators.topcoder.com:7051
+      - CORE_PEER_LOCALMSPID=ModeratorsMSP
+    volumes:
+        - /var/run/:/host/var/run/
+        - ../crypto-config/peerOrganizations/moderators.topcoder.com/peers/peer0.moderators.topcoder.com/msp:/etc/hyperledger/fabric/msp
+        - ../crypto-config/peerOrganizations/moderators.topcoder.com/peers/peer0.moderators.topcoder.com/tls:/etc/hyperledger/fabric/tls
+        - peer0.moderators.topcoder.com:/var/hyperledger/production
+    ports:
+      - 13051:7051
+      - 13053:7053
+
+  peer1.moderators.topcoder.com:
+    container_name: peer1.moderators.topcoder.com
+    extends:
+      file: peer-base.yaml
+      service: peer-base
+    environment:
+      - CORE_PEER_ID=peer1.moderators.topcoder.com
+      - CORE_PEER_ADDRESS=peer1.moderators.topcoder.com:7051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer1.moderators.topcoder.com:7051
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.moderators.topcoder.com:7051
+      - CORE_PEER_LOCALMSPID=ModeratorsMSP
+    volumes:
+        - /var/run/:/host/var/run/
+        - ../crypto-config/peerOrganizations/moderators.topcoder.com/peers/peer1.moderators.topcoder.com/msp:/etc/hyperledger/fabric/msp
+        - ../crypto-config/peerOrganizations/moderators.topcoder.com/peers/peer1.moderators.topcoder.com/tls:/etc/hyperledger/fabric/tls
+        - peer1.moderators.topcoder.com:/var/hyperledger/production
+    ports:
+      - 14051:7051
+      - 14053:7053

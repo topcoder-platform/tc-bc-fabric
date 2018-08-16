@@ -1,0 +1,22 @@
+{
+  "name": "api-service",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "start": "rm -rf /tmp/hfc-* && node ./bin/www"
+  },
+  "dependencies": {
+    "config": "^2.0.1",
+    "cookie-parser": "~1.4.3",
+    "debug": "~2.6.9",
+    "express": "~4.16.0",
+    "fabric-ca-client": "^1.2.1",
+    "fabric-client": "^1.2.1",
+    "get-parameter-names": "^0.3.0",
+    "http-errors": "~1.6.2",
+    "joi": "^13.5.2",
+    "lodash": "^4.17.10",
+    "morgan": "~1.9.0",
+    "pug": "2.0.0-beta11"
+  }
+}

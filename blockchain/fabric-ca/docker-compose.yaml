@@ -1,0 +1,53 @@
+version: '2'
+
+networks:
+  topcoder-review:
+
+services:
+  rca-topcoder:
+    container_name: rca-topcoder
+    extends:
+          file: ca-base.yaml
+          service: ca-base
+    environment:
+      - ORGANIZATION=Topcoder
+    volumes:
+      - ../crypto-config/peerOrganizations/topcoder.topcoder.com/ca:/etc/hyperledger/fabric-ca-server-config
+    ports:
+      - 7054:7054
+
+  rca-clients:
+    container_name: rca-clients
+    extends:
+          file: ca-base.yaml
+          service: ca-base
+    environment:
+      - ORGANIZATION=Clients
+    volumes:
+      - ../crypto-config/peerOrganizations/clients.topcoder.com/ca:/etc/hyperledger/fabric-ca-server-config
+    ports:
+      - 8054:7054
+
+  rca-moderators:
+    container_name: rca-moderators
+    extends:
+          file: ca-base.yaml
+          service: ca-base
+    environment:
+      - ORGANIZATION=Moderators
+    volumes:
+      - ../crypto-config/peerOrganizations/moderators.topcoder.com/ca:/etc/hyperledger/fabric-ca-server-config
+    ports:
+      - 9054:7054
+
+  rca-members:
+    container_name: rca-members
+    extends:
+          file: ca-base.yaml
+          service: ca-base
+    environment:
+      - ORGANIZATION=Members
+    volumes:
+      - ../crypto-config/peerOrganizations/members.topcoder.com/ca:/etc/hyperledger/fabric-ca-server-config
+    ports:
+      - 10054:7054

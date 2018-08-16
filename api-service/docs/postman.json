@@ -1,0 +1,830 @@
+{
+	"info": {
+		"_postman_id": "d5899b66-60b4-45e8-91ff-f584bb3cfaac",
+		"name": "blockchain",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"_postman_id": "7594a8d7-a23a-44a9-b03f-8c5040a1cb72",
+			"name": "Projects",
+			"item": [
+				{
+					"_postman_id": "fd511c4a-23c0-41da-a4c5-4e735bf5bda9",
+					"name": "Failures",
+					"item": [
+						{
+							"_postman_id": "149dbbce-a579-4f3d-bc4f-b43bd8117dd9",
+							"name": "Create Project (MISSING FIELDS)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "1c088d85-de8c-4ad5-9d75-960ac9d296ea",
+										"type": "text/javascript",
+										"exec": [
+											""
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"projectId\": \"{{$guid}}\",\n\t\"name\": \"my project\",\n\t\"description\": \"this is my project\",\n\t\"createdBy\": \"{{OPERATOR_USER_EMAIL}}\"\n}"
+								},
+								"url": {
+									"raw": "{{URL}}/projects",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"projects"
+									]
+								},
+								"description": "creates a project"
+							},
+							"response": []
+						},
+						{
+							"_postman_id": "43fa4052-80c3-4d95-ae81-8af74f418072",
+							"name": "Create Project (Invalid Role)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "1c088d85-de8c-4ad5-9d75-960ac9d296ea",
+										"type": "text/javascript",
+										"exec": [
+											""
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"projectId\": \"{{$guid}}\",\n\t\"name\": \"my project\",\n\t\"description\": \"this is my project\",\n\t\"budget\": 12345,\n\t\"createdBy\": \"{{MEMBER_USER_EMAIL}}\"\n}"
+								},
+								"url": {
+									"raw": "{{URL}}/projects",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"projects"
+									]
+								},
+								"description": "creates a project"
+							},
+							"response": []
+						}
+					],
+					"_postman_isSubFolder": true
+				},
+				{
+					"_postman_id": "a98bc3f7-29d5-47ed-9828-e9db408d636f",
+					"name": "Create Project",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "4d88dad9-2a2a-4eb3-9c2a-c42d9b494f9c",
+								"type": "text/javascript",
+								"exec": [
+									"pm.environment.set(\"PROJECT_ID\", pm.response.json().projectId);",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"projectId\": \"{{$guid}}\",\n\t\"name\": \"my project\",\n\t\"description\": \"this is my project\",\n\t\"budget\": 12345,\n\t\"createdBy\": \"{{OPERATOR_USER_EMAIL}}\"\n}"
+						},
+						"url": {
+							"raw": "{{URL}}/projects",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"projects"
+							]
+						},
+						"description": "creates a project"
+					},
+					"response": []
+				},
+				{
+					"_postman_id": "924bbbe6-a416-4f94-b0f6-3eabea3b3ff6",
+					"name": "Update Project",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"projectId\": \"{{PROJECT_ID}}\",\n\t\"copilotId\": \"{{$guid}}\",\n\t\"name\": \"my project (modified 2)\",\n\t\"updatedBy\": \"{{OPERATOR_USER_EMAIL}}\"\n}"
+						},
+						"url": {
+							"raw": "{{URL}}/projects/:projectId",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"projects",
+								":projectId"
+							],
+							"variable": [
+								{
+									"key": "projectId",
+									"value": "{{PROJECT_ID}}"
+								}
+							]
+						},
+						"description": "creates a project"
+					},
+					"response": []
+				},
+				{
+					"_postman_id": "f6cb993d-6b9e-48e8-8523-cefa5f0439fa",
+					"name": "Update Project (update to active)",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"projectId\": \"{{PROJECT_ID}}\",\n\t\"status\": \"active\",\n\t\"updatedBy\": \"{{OPERATOR_USER_EMAIL}}\"\n}"
+						},
+						"url": {
+							"raw": "{{URL}}/projects/:projectId",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"projects",
+								":projectId"
+							],
+							"variable": [
+								{
+									"key": "projectId",
+									"value": "{{PROJECT_ID}}"
+								}
+							]
+						},
+						"description": "creates a project"
+					},
+					"response": []
+				},
+				{
+					"_postman_id": "956a36de-1a93-442f-9d47-e01f5b41db8c",
+					"name": "List Projects - topcoder-client channel (TEST ONLY)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "6d773618-10db-4adc-82de-082ffe40f379",
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{URL}}/projects?channel=topcoder-client",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"projects"
+							],
+							"query": [
+								{
+									"key": "channel",
+									"value": "topcoder-client"
+								}
+							]
+						},
+						"description": "Lists the projects"
+					},
+					"response": []
+				},
+				{
+					"_postman_id": "861c6697-c3bb-4d0d-b081-6b30f7a449b0",
+					"name": "List Projects - topcoder-review channel (TEST ONLY)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "6d773618-10db-4adc-82de-082ffe40f379",
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{URL}}/projects?channel=topcoder-review",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"projects"
+							],
+							"query": [
+								{
+									"key": "channel",
+									"value": "topcoder-review"
+								}
+							]
+						},
+						"description": "Lists the projects"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"_postman_id": "e64f4527-aab6-4667-9d16-fe9aa8f64bb4",
+			"name": "Challenges",
+			"item": [
+				{
+					"_postman_id": "fef27bc5-3ee2-43c3-b178-d0ff3673cf05",
+					"name": "Failures",
+					"item": [
+						{
+							"_postman_id": "bf621c1e-e3ed-47a9-8eec-2b1972ce682f",
+							"name": "Create Challenge (Invalid Project ID)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "5e21e9f6-6b7e-430e-af4e-108651f07fdb",
+										"type": "text/javascript",
+										"exec": [
+											""
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n   \"challengeId\": \"{{$guid}}\",\n   \"projectId\": \"xxxx\",\n   \"name\": \"A great name\",\n   \"description\": \"A long description\",\n   \"createdBy\": \"{{OPERATOR_USER_EMAIL}}\"\n}"
+								},
+								"url": {
+									"raw": "{{URL}}/challenges",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"challenges"
+									]
+								},
+								"description": "creates a challenge"
+							},
+							"response": []
+						},
+						{
+							"_postman_id": "339e2279-ab79-4cb7-bb34-98d707afc087",
+							"name": "Create Challenge (Missing fields)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "5e21e9f6-6b7e-430e-af4e-108651f07fdb",
+										"type": "text/javascript",
+										"exec": [
+											""
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n   \"challengeId\": \"{{$guid}}\",\n   \"createdBy\": \"{{OPERATOR_USER_EMAIL}}\"\n}"
+								},
+								"url": {
+									"raw": "{{URL}}/challenges",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"challenges"
+									]
+								},
+								"description": "creates a challenge"
+							},
+							"response": []
+						},
+						{
+							"_postman_id": "77740b6b-30f5-41dc-b490-4162cda5c0d3",
+							"name": "Register Challenge(Invalid Project ID)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "c98299f8-5eb8-4380-b884-7c093f3a6a10",
+										"type": "text/javascript",
+										"exec": [
+											"",
+											""
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n   \"memberId\": \"{{OPERATOR_USER_ID}}\",\n   \"challengeId\": \"{{CHANLLENGE_ID}}\",\n   \"projectId\": \"xxxx\"\n}"
+								},
+								"url": {
+									"raw": "{{URL}}/register",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"register"
+									]
+								},
+								"description": "registers a challenge"
+							},
+							"response": []
+						}
+					],
+					"_postman_isSubFolder": true
+				},
+				{
+					"_postman_id": "c7a8e905-a103-4216-abd1-eed91a9b9d09",
+					"name": "Create Challenge",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "b7855fa4-2d62-48e7-a613-3ee5d7b38bab",
+								"type": "text/javascript",
+								"exec": [
+									"pm.environment.set(\"CHANLLEGE_ID\", pm.response.json().challengeId);",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n   \"challengeId\": \"{{$guid}}\",\n   \"projectId\": \"{{PROJECT_ID}}\",\n   \"name\": \"A great name\",\n   \"description\": \"A long description\",\n   \"createdBy\": \"{{OPERATOR_USER_EMAIL}}\"\n}"
+						},
+						"url": {
+							"raw": "{{URL}}/challenges",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"challenges"
+							]
+						},
+						"description": "creates a project"
+					},
+					"response": []
+				},
+				{
+					"_postman_id": "9998fc1c-7e15-4750-9672-b9b657039f0a",
+					"name": "Register Challenge",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "c98299f8-5eb8-4380-b884-7c093f3a6a10",
+								"type": "text/javascript",
+								"exec": [
+									"",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n   \"memberId\": \"{{OPERATOR_USER_ID}}\",\n   \"challengeId\": \"{{CHANLLEGE_ID}}\",\n   \"projectId\": \"{{PROJECT_ID}}\"\n}"
+						},
+						"url": {
+							"raw": "{{URL}}/register",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"register"
+							]
+						},
+						"description": "registers a challenge"
+					},
+					"response": []
+				},
+				{
+					"_postman_id": "ad913917-8b9d-4288-bab9-5e5b385b33d4",
+					"name": "Update Challenge",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "0f3f5211-4f0c-477d-998a-a048026f1a62",
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n   \"challengeId\": \"{{CHANLLEGE_ID}}\",\n   \"name\": \"A great name modified\",\n   \"updatedBy\": \"{{OPERATOR_USER_EMAIL}}\"\n}"
+						},
+						"url": {
+							"raw": "{{URL}}/challenges/:challengeId",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"challenges",
+								":challengeId"
+							],
+							"variable": [
+								{
+									"key": "challengeId",
+									"value": "{{CHANLLEGE_ID}}"
+								}
+							]
+						},
+						"description": "udpates a challenge"
+					},
+					"response": []
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "fbc673eb-3306-4b3f-8839-c648ab2a26ee",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "a3719b27-1881-46c5-9cb9-604ed78619c8",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"_postman_id": "e42f004a-5458-4889-9efa-2ee752c2099c",
+			"name": "Users",
+			"item": [
+				{
+					"_postman_id": "3e969bac-fead-4dab-8307-74960c3f87df",
+					"name": "Failures",
+					"item": [
+						{
+							"_postman_id": "432672dd-feaa-4c44-8fde-9ccd75aff810",
+							"name": "Create User (MISSING FIELDS)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "a589b8ee-cd56-4bb7-8daa-c37e440da0e2",
+										"type": "text/javascript",
+										"exec": [
+											""
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"memberId\": \"{{$guid}}\"\n}"
+								},
+								"url": {
+									"raw": "{{URL}}/users",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"users"
+									]
+								},
+								"description": "creates a project"
+							},
+							"response": []
+						},
+						{
+							"_postman_id": "560b1a65-95ac-459c-af06-dd25cdbdba67",
+							"name": "Create User (Invalid Role)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "a589b8ee-cd56-4bb7-8daa-c37e440da0e2",
+										"type": "text/javascript",
+										"exec": [
+											""
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"memberId\": \"{{$guid}}\",\n\t\"memberEmail\": \"tcdeveloper-{{$randomInt}}@126.com\",\n\t\"roles\": [\"xxxx\"]\n}"
+								},
+								"url": {
+									"raw": "{{URL}}/users",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"users"
+									]
+								},
+								"description": "creates a user"
+							},
+							"response": []
+						}
+					],
+					"_postman_isSubFolder": true
+				},
+				{
+					"_postman_id": "8ae423cc-33c2-41e3-ba44-39acdfbab232",
+					"name": "Create User",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "c2fa7be2-5fb5-402c-8a6f-a619c0102af7",
+								"type": "text/javascript",
+								"exec": [
+									"pm.environment.set(\"OPERATOR_USER_EMAIL\", pm.response.json().memberEmail);",
+									"pm.environment.set(\"OPERATOR_USER_ID\", pm.response.json().memberId);",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"memberId\": \"{{$guid}}\",\n\t\"memberEmail\": \"tcdeveloper-{{$randomInt}}@126.com\",\n\t\"roles\": [\"manager\"]\n}"
+						},
+						"url": {
+							"raw": "{{URL}}/users",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"users"
+							]
+						},
+						"description": "creates a project"
+					},
+					"response": []
+				},
+				{
+					"_postman_id": "bc17f843-9491-4b42-8bf6-c01090cf7add",
+					"name": "Create User (member)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "81d286bf-3b07-49de-aca9-cd74997d001a",
+								"type": "text/javascript",
+								"exec": [
+									"pm.environment.set(\"OPERATOR_USER_EMAIL\", pm.response.json().memberEmail);",
+									"pm.environment.set(\"OPERATOR_USER_ID\", pm.response.json().memberId);",
+									"pm.environment.set(\"MEMBER_USER_EMAIL\", pm.response.json().memberEmail);",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"memberId\": \"{{$guid}}\",\n\t\"memberEmail\": \"tcdeveloper-{{$randomInt}}@126.com\",\n\t\"roles\": [\"member\"]\n}"
+						},
+						"url": {
+							"raw": "{{URL}}/users",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"users"
+							]
+						},
+						"description": "creates a project"
+					},
+					"response": []
+				},
+				{
+					"_postman_id": "57e6ff0e-1442-4430-8688-0090f0117ac6",
+					"name": "List Users (TEST ONLY)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "7a009373-69fc-438b-94a1-c4aa771e6759",
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"memberId\": \"{{$guid}}\",\n\t\"memberEmail\": \"tcdeveloper-{{$randomInt}}@126.com\",\n\t\"roles\": [\"member\"]\n}"
+						},
+						"url": {
+							"raw": "{{URL}}/users",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"users"
+							]
+						},
+						"description": "List users"
+					},
+					"response": []
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "d61dd08f-9489-4da4-bd5e-3c165b41e26c",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "e33e1fd4-cb3b-4210-b8d6-8e60408e1ade",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		}
+	]
+}

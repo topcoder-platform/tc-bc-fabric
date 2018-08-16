@@ -1,0 +1,55 @@
+{
+  "id": "bd4fbe3b-4812-4584-ac4d-3d9e1717f799",
+  "name": "BLOCKCHAIN_ENV",
+  "values": [
+    {
+      "value": "http://localhost:3010/api/v1",
+      "key": "URL",
+      "enabled": true
+    },
+    {
+      "description": {
+        "content": "",
+        "type": "text/plain"
+      },
+      "value": "61e2fc97-6bea-42ef-bd2f-5df41b526faf",
+      "key": "PROJECT_ID",
+      "enabled": true
+    },
+    {
+      "description": {
+        "content": "",
+        "type": "text/plain"
+      },
+      "value": "tcdeveloper-196@126.com",
+      "key": "OPERATOR_USER_EMAIL",
+      "enabled": true
+    },
+    {
+      "description": {
+        "content": "",
+        "type": "text/plain"
+      },
+      "value": "1d84c9e5-71ca-46a0-8aed-cbfa7c57baef",
+      "key": "CHANLLEGE_ID",
+      "enabled": true
+    },
+    {
+      "value": "05ec3818-3f5d-4a43-88e0-2be524308228",
+      "key": "OPERATOR_USER_ID",
+      "enabled": true
+    },
+    {
+      "description": {
+        "content": "",
+        "type": "text/plain"
+      },
+      "value": "tcdeveloper-196@126.com",
+      "key": "MEMBER_USER_EMAIL",
+      "enabled": true
+    }
+  ],
+  "_postman_variable_scope": "environment",
+  "_postman_exported_at": "2018-08-10T02:41:29.773Z",
+  "_postman_exported_using": "Postman/6.2.3"
+}
