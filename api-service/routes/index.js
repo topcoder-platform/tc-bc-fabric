@@ -50,6 +50,11 @@ module.exports = {
     delete: {
       controller: 'ChallengeController', method: 'unregisterChallenge'
     }
+  },
+  '/transaction': {
+    post: {
+      controller: 'ChaincodeController', method: 'getTransaction'
+    }
   }
 
 };

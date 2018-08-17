@@ -228,9 +228,33 @@ async function queryByChaincode(client, channel, chaincode, fcn, args, useAdmin)
   return JSON.parse(result.toString());
 }
 
+async function getTransactionByID(client, channel, trxnID) {
+	try {
+    // first setup the client for this org
+    const targetPeers = channel.getChannelPeers().filter(p => p.isInRole("chaincodeQuery")
+    && p.isInOrg(client.getMspid()));
+
+    const targets = targetPeers.map(p => p.getName());
+
+    if (targetPeers.length === 0) {
+      throw new Error('cannot find any peers to query chaincode for channel: '
+        + channel.getName() + ' may be there is a configuration issue.');
+    }
+
+		let response_payload = await channel.queryTransaction(trxnID, targets[0]);
+		if (response_payload) {
+			return response_payload;
+		} else {
+			return 'response_payload is null';
+		}
+	} catch(error) {
+		return error.toString();
+	}
+};
 
 module.exports = {
   getClientForOrg,
   invokeChainCode,
-  queryByChaincode
+  queryByChaincode,
+  getTransactionByID
 };
