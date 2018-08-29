@@ -5,6 +5,7 @@
 'use strict';
 const shim = require('fabric-shim');
 const _ = require('lodash');
+const errors = require('./errors');
 
 const ClientIdentity = shim.ClientIdentity;
 
@@ -28,7 +29,7 @@ function roleToOrganization(role) {
  * Checks the role for permissions.
  * @param stub the stub.
  * @param permittedRoles the permitted roles.
- * @returns {boolean} true if correct, otherwise throws exception.
+ * @returns {Array} the roles of the user.
  */
 const checkRole = (stub, permittedRoles) => {
   let cid = new ClientIdentity(stub);
@@ -40,12 +41,6 @@ const checkRole = (stub, permittedRoles) => {
   }
 
   const roles = rolesABA.split(',');
-  if (roles.indexOf('admin') >= 0) {
-    // we always allow admin access
-    return true;
-  }
-
-  console.log('operator roles: ' + rolesABA + ' msp: ' + cid.getMSPID());
 
   const validRoles = [];
   for (let role of roles) {
@@ -54,8 +49,15 @@ const checkRole = (stub, permittedRoles) => {
     }
   }
 
+  if (roles.indexOf('admin') >= 0) {
+    // we always allow admin access
+    return roles;
+  }
+
+
   if (validRoles.length === 0) {
-    throw new Error('Access denied. Only these roles can perform this operation: ' + permittedRoles.join(','));
+    throw new errors.ForbiddenError(
+      'Access denied. Only these roles can perform this operation: ' + permittedRoles.join(','));
   }
 
   // validate the MSPID
@@ -63,17 +65,18 @@ const checkRole = (stub, permittedRoles) => {
   for (let role of validRoles) {
     const org = roleToOrganization(role);
     if (org === null) {
-      throw new Error('Access denied. Cannot recognize role: ' + role);
+      throw new errors.ForbiddenError('Access denied. Cannot recognize role: ' + role);
     }
     if (cid.getMSPID() === `${org}MSP`) {
       ok = true;
     }
   }
+
   if (!ok) {
-    throw new Error('Access denied. The request is not submitted from a correct organization peer.');
+    throw new errors.ForbiddenError('Access denied. The request is not submitted from a correct organization peer.');
   }
 
-  return true;
+  return roles;
 };
 
 /**
@@ -104,8 +107,9 @@ let Chaincode = class {
     console.info(ret);
     if (!this[ret.fcn]) {
       console.error('no function of name:' + ret.fcn + ' found');
-      throw new Error('Received unknown function ' + ret.fcn + ' invocation');
+      throw new errors.BadRequestError('Received unknown function ' + ret.fcn + ' invocation');
     }
+
     let method = this[ret.fcn].bind(this);
     try {
       let payload = await method(stub, ret.params);
@@ -133,11 +137,11 @@ let Chaincode = class {
   async createProject(stub, args) {
     checkRole(stub, ['manager', 'client']);
     if (args.length !== 1) {
-      throw new Error('Incorrect number of arguments. Expecting 1 (for payload)');
+      throw new errors.BadRequestError('Incorrect number of arguments. Expecting 1 (for payload)');
     }
     const payload = JSON.parse(args[0]);
     if (!payload.projectId) {
-      throw new Error('projectId is required');
+      throw new errors.ValidationError('projectId is required');
     }
     console.log(this);
     await this.__saveProject(stub, payload);
@@ -155,19 +159,20 @@ let Chaincode = class {
   async updateProject(stub, args) {
     checkRole(stub, ['manager', 'client']);
     if (args.length !== 1) {
-      throw new Error('Incorrect number of arguments. Expecting 1 (for payload)');
+      throw new errors.BadRequestError('Incorrect number of arguments. Expecting 1 (for payload)');
     }
     const payload = JSON.parse(args[0]);
     if (!payload.projectId) {
-      throw new Error('projectId is required');
+      throw new errors.ValidationError('projectId is required');
     }
     if (!payload.updatedBy) {
-      throw new Error('updatedBy is required');
+      throw new errors.ValidationError('updatedBy is required');
     }
 
     const eProject = await this.__getProject(stub, payload.projectId);
     if (eProject === null) {
-      throw new Error('cannot find project with id: ' + payload.projectId);
+      throw new errors.BadRequestError('cannot find project with id: ' + payload.projectId
+        + '. Maybe it is not created or not active yet.');
     }
     if (payload.status) {
       eProject.status = payload.status;
@@ -199,7 +204,7 @@ let Chaincode = class {
    */
   async getProject(stub, args) {
     if (args.length !== 1) {
-      throw new Error('Incorrect number of arguments. Expecting 1 (for email)');
+      throw new errors.BadRequestError('Incorrect number of arguments. Expecting 1 (for email)');
     }
     const projectId = args[0];
     return await this.__getProject(stub, projectId);
@@ -214,31 +219,31 @@ let Chaincode = class {
   async createChallenge(stub, args) {
     checkRole(stub, ['manager', 'copilot']);
     if (args.length !== 1) {
-      throw new Error('Incorrect number of arguments. Expecting 1 (for challenge payload)');
+      throw new errors.BadRequestError('Incorrect number of arguments. Expecting 1 (for challenge payload)');
     }
     const challenge = JSON.parse(args[0]);
     if (!challenge.projectId) {
-      throw new Error('projectId is required');
+      throw new errors.ValidationError('projectId is required');
     }
     if (!challenge.challengeId) {
-      throw new Error('challengeId is required');
+      throw new errors.BadRequestError('challengeId is required');
     }
 
     const eChallenge = await this.__getChallenge(stub, challenge.challengeId);
     if (eChallenge) {
-      throw new Error('challenge with id ' + challenge.challengeId + ' already exists');
+      throw new errors.ConflictError('challenge with id ' + challenge.challengeId + ' already exists');
     }
 
     const project = await this.__getProject(stub, challenge.projectId);
     if (!project) {
-      throw new Error('cannot find project with id: ' + challenge.projectId);
+      throw new errors.BadRequestError('cannot find project with id: ' + challenge.projectId);
     }
 
     const challenges = project.challenges || [];
 
     for (let c of challenges) {
       if (c.challengeId === challenge.challengeId) {
-        throw new Error('the challenge with id: ' + c.challengeId + ' already created in this project');
+        throw new errors.ConflictError('the challenge with id: ' + c.challengeId + ' already created in this project');
       }
     }
 
@@ -265,16 +270,16 @@ let Chaincode = class {
   async updateChallenge(stub, args) {
     checkRole(stub, ['manager', 'copilot']);
     if (args.length !== 1) {
-      throw new Error('Incorrect number of arguments. Expecting 1 (for payload)');
+      throw new errors.BadRequestError('Incorrect number of arguments. Expecting 1 (for payload)');
     }
     const payload = JSON.parse(args[0]);
     if (!payload.challengeId) {
-      throw new Error('challengeId is required');
+      throw new errors.ValidationError('challengeId is required');
     }
 
     const challenge = await this.__getChallenge(stub, payload.challengeId);
     if (!challenge) {
-      throw new Error('challenge does not exists with id: ' + payload.challengeId);
+      throw new errors.BadRequestError('challenge does not exists with id: ' + payload.challengeId);
     }
 
     // update the challenge
@@ -290,7 +295,7 @@ let Chaincode = class {
 
     const project = await this.__getProject(stub, challenge.projectId);
     if (!project) {
-      throw new Error('cannot find project with id: ' + challenge.projectId);
+      throw new errors.BadRequestError('cannot find project with id: ' + challenge.projectId);
     }
 
     const challenges = project.challenges || [];
@@ -307,10 +312,11 @@ let Chaincode = class {
     }
 
     if (!found) {
-      throw new Error('cannot find challenge: ' + challenge.challengeId + ' from project: ' + project.projectId);
+      throw new errors.BadRequestError(
+        'cannot find challenge: ' + challenge.challengeId + ' from project: ' + project.projectId);
     }
 
-    project.challenges = challenge;
+    project.challenges = challenges;
 
     // save the project
     await this.__saveProject(stub, project);
@@ -325,7 +331,7 @@ let Chaincode = class {
   async registerChallenge(stub, args) {
     checkRole(stub, ['member']);
     if (args.length !== 1) {
-      throw new Error('Incorrect number of arguments. Expecting 1 (for payload)');
+      throw new errors.BadRequestError('Incorrect number of arguments. Expecting 1 (for payload)');
     }
     const member = JSON.parse(args[0]);
 
@@ -341,11 +347,126 @@ let Chaincode = class {
   async unregisterChallenge(stub, args) {
     checkRole(stub, ['member']);
     if (args.length !== 1) {
-      throw new Error('Incorrect number of arguments. Expecting 1 (for payload)');
+      throw new errors.BadRequestError('Incorrect number of arguments. Expecting 1 (for payload)');
     }
     const member = JSON.parse(args[0]);
 
     return await this.__updateMember(stub, member, 0);
+  }
+
+
+  /**
+   * Uploads the submission.
+   * @param stub the stub.
+   * @param args the arguments
+   * @returns {Promise<any>} the uploaded submission entity.
+   */
+  async uploadSubmission(stub, args) {
+    checkRole(stub, ['member']);
+    if (args.length !== 1) {
+      throw new errors.BadRequestError('Incorrect number of arguments. Expecting 1 (for payload)');
+    }
+    const submission = JSON.parse(args[0]);
+    const challengeId = submission.challengeId;
+    delete  submission.challengeId;
+
+    // find the challenge from the project
+    const {project, challenge} = await this.__getProjectChallenge(stub, challengeId);
+
+    // check if the member is registered
+    const member = _.filter(challenge.members,
+      (m) => m.memberId === submission.memberId && m.status === 1).shift();
+    if (!member) {
+      throw new errors.ForbiddenError(
+        `Access denied. member: ${submission.memberId} is not registered in this challenge`);
+    }
+
+    // find the existing submission of the member
+    let existingIndex = null;
+    _.forEach(challenge.submissions, (s, index) => {
+      if (s.memberId === submission.memberId) {
+        existingIndex = index;
+      }
+    });
+    if (existingIndex !== null) {
+      // override the existing submission
+      challenge.submissions[existingIndex] = submission;
+    } else {
+      challenge.submissions = challenge.submissions || [];
+      challenge.submissions.push(submission);
+    }
+    await this.__saveProject(stub, project);
+    return submission;
+  }
+
+  /**
+   * Gets the submission.
+   * @param stub the stub.
+   * @param args the arguments.
+   * @returns {Promise<*>} the submission entity.
+   */
+  async getSubmission(stub, args) {
+
+    const roles = checkRole(stub, ['member', 'manager', 'copilot']);
+
+    const request = JSON.parse(args[0]);
+    const challengeId = request.challengeId;
+    const submissionId = request.submissionId;
+    const memberId = request.memberId;
+    const {project, challenge} = await this.__getProjectChallenge(stub, challengeId);
+    const submission = _.filter(challenge.submissions, s => s.submissionId === submissionId).shift();
+    if (!submission) {
+      throw new errors.BadRequestError(`cannot find submission: ${submissionId} in challenge: ${challengeId}`);
+    }
+    // validate the permissions
+    let permitted = false;
+    if (roles.indexOf('manager') >= 0) {
+      permitted = true;
+    }
+    if (roles.indexOf('copilot') >= 0) {
+      // check if he is the copilot or the challenge
+      if (memberId === project.copilotId) {
+        permitted = true;
+      }
+    }
+    if (roles.indexOf('member') >= 0) {
+      // check if the member registered the challenge
+      const registerMember = _.filter(challenge.members, m => m.memberId === memberId && m.status === 1).shift();
+      if (registerMember) {
+        permitted = true;
+      }
+    }
+    if (!permitted) {
+      throw new errors.ForbiddenError('You cannot download the submission. You must be a manager, ' +
+        'or the copilot of the project, or a registered member of the challenge');
+    }
+
+    return submission;
+  }
+
+  /**
+   * Gets the project and challenge instance from he challenge id.
+   * @param stub the stub.
+   * @param challengeId the challenge id.
+   * @returns {Promise<{project: *, challenge: string}>} the project or the challenge.
+   * @private
+   */
+  async __getProjectChallenge(stub, challengeId) {
+    let challenge = await this.__getChallenge(stub, challengeId);
+    if (!challenge) {
+      throw new errors.BadRequestError('cannot find the challenge with id: ' + challengeId);
+    }
+    const projectId = challenge.projectId;
+    const project = await this.__getProject(stub, projectId);
+    if (!project) {
+      throw new errors.BadRequestError('cannot find the project with id: ' + projectId);
+    }
+    // find the challenge from the project
+    challenge = _.filter(project.challenges, (c) => c.challengeId === challengeId).shift();
+    if (!challenge) {
+      throw new errors.BadRequestError(`cannot find challenge of id: ${challengeId} in project: ${projectId}`);
+    }
+    return {project, challenge};
   }
 
   /**
@@ -358,40 +479,32 @@ let Chaincode = class {
    */
   async __updateMember(stub, member, status) {
     if (!member.memberId) {
-      throw new Error('memberId is required');
-    }
-    if (!member.projectId) {
-      throw new Error('projectId is required');
+      throw new errors.ValidationError('memberId is required');
     }
     if (!member.challengeId) {
-      throw new Error('challengeId is required');
+      throw new errors.ValidationError('challengeId is required');
     }
-    const project = await this.__getProject(stub, member.projectId);
-    if (!project) {
-      throw new Error('cannot find project with id: ' + member.projectId);
-    }
-    let foundChallenge = null;
-    project.challenges = project.challenges || [];
-    for (let i = 0; i < project.challenges.length; i++) {
-      const challenge = project.challenges[i];
-      if (challenge.challengeId === member.challengeId) {
-        foundChallenge = challenge;
-        break;
-      }
-    }
-    if (!foundChallenge) {
-      throw new Error('cannot find challenge with id: ' + member.challengeId + ' in the given project');
-    }
+    const {project, challenge} = await this.__getProjectChallenge(stub, member.challengeId);
+    let foundChallenge = challenge;
     // check if the member exists
     foundChallenge.members = foundChallenge.members || [];
     let found = false;
     for (let i = 0; i < foundChallenge.members.length; i++) {
       const m = foundChallenge.members[i];
       if (member.memberId === m.memberId) {
+        if (status === 0) {
+          // unregister, check if already provided a submission
+          const submission = _.filter(foundChallenge.submissions, s => s.memberId === member.memberId).shift();
+          if (submission) {
+            throw new errors.ForbiddenError(
+              'you cannot unregister this challenge, because you have provided a submission.');
+          }
+        }
         foundChallenge.members[i] = {
           memberId: member.memberId,
           status: status
         };
+
         found = true;
       }
     }
@@ -511,4 +624,6 @@ let Chaincode = class {
   }
 };
 
-shim.start(new Chaincode());
+
+
+module.exports = Chaincode;

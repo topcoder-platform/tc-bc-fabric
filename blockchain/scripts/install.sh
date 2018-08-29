@@ -74,6 +74,10 @@ instantiateChaincode topcoder-review users Topcoder 0 $CHAIN_CODE_VERSION
 ## Install chaincode: projects on peer0.Topcoder
 echo "Installing chaincode: projects on peer0.Topcoder..."
 installChaincode projects Topcoder 0 $CHAIN_CODE_VERSION
+echo "Instantiating chaincode: users on peer0.Topcoder..."
+instantiateChaincode topcoder-client projects Topcoder 0 $CHAIN_CODE_VERSION
+instantiateChaincode topcoder-review projects Topcoder 0 $CHAIN_CODE_VERSION
+
 
 echo "Installing chaincode: projects on peer0.Clients..."
 installChaincode projects Clients 0 $CHAIN_CODE_VERSION
@@ -84,16 +88,16 @@ installChaincode projects Members 0 $CHAIN_CODE_VERSION
 echo "Installing chaincode: projects on peer0.Moderators..."
 installChaincode projects Moderators 0 $CHAIN_CODE_VERSION
 
-## Instantiate chaincode: projects on peer0.Topcoder
-echo "Instantiating chaincode: users on peer0.Topcoder..."
-instantiateChaincode topcoder-client projects Topcoder 0 $CHAIN_CODE_VERSION
-instantiateChaincode topcoder-client projects Clients 0 $CHAIN_CODE_VERSION
 
-## Instantiate chaincode: projects on peer0.Topcoder
-echo "Instantiating chaincode: users on peer0.Topcoder..."
-instantiateChaincode topcoder-review projects Topcoder 0 $CHAIN_CODE_VERSION
-instantiateChaincode topcoder-review projects Members 0 $CHAIN_CODE_VERSION
-# instantiateChaincode topcoder-review projects Moderators 0 $CHAIN_CODE_VERSION
+echo "Prepare chaincode in peer0.Clients..."
+chaincodeQuery topcoder-client projects '{"Args":["Init"]}' Clients 0
+
+echo "Prepare chaincode in peer0.Members..."
+chaincodeQuery topcoder-review projects '{"Args":["Init"]}' Members 0
+
+echo "Prepare chaincode in peer0.Moderators..."
+chaincodeQuery topcoder-review projects '{"Args":["Init"]}' Moderators 0
+
 
 
 echo ""

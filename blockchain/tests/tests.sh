@@ -32,3 +32,9 @@ chaincodeQuery topcoder-client projects '{"Args":["listProjects"]}' Topcoder 0
 
 echo "retrieving all the projects..."
 chaincodeQuery topcoder-review projects '{"Args":["listProjects"]}' Topcoder 0
+
+echo "retrieving all the projects..."
+chaincodeQuery topcoder-review projects '{"Args":["Init"]}' Members 0
+
+echo "retrieving all the projects..."
+chaincodeQuery topcoder-review projects '{"Args":["listProjects"]}' Moderators 0

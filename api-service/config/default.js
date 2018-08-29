@@ -11,5 +11,11 @@ module.exports = {
   port: 3010,
   logLevel: "debug",
   version: "v1",
-  secretGenerateKey: 'FabricT0pC0der'
+  secretGenerateKey: 'FabricT0pC0der',
+  fileUploadTMPDirectory: '/tmp/topcoder-upload',
+  ipfs: {
+    host: 'localhost',
+    port: '5001',
+    protocol: 'http'
+  }
 };

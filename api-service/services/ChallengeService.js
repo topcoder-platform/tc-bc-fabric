@@ -8,8 +8,10 @@
  * @author TCSDEVELOPER
  * @version 1.0
  */
+const fs = require('fs');
 const Joi = require('joi');
 const logger = require('../utils/logger');
+const helper = require('../utils/helper');
 const userService = require('./UserService');
 const fabricService = require('./FabricService');
 
@@ -99,11 +101,93 @@ async function unregisterChallenge(member) {
 
 unregisterChallenge.schema = registerChallenge.schema;
 
+/**
+ * Uploads a submission. The submission file will be stored in the IPFS and
+ * the submission info will store in the blockchain ledger.
+ * @param file the uploaded file info.
+ * @param payload the payload
+ */
+async function uploadSubmission(file, payload) {
+
+  try {
+    const challengeId = payload.challengeId;
+    const submissionId = payload.submissionId;
+    const originalFileName = payload.fileName || file.originalname;
+    const fileName = `submission_${submissionId}_${originalFileName}`;
+    const ipfsResult = await helper.ipfsAdd(file.path);
+    // prepare the chaincode payload
+    const chaincodePayload = {
+      submissionId,
+      challengeId: challengeId,
+      memberId: payload.memberId,
+      originalFileName,
+      fileName,
+      ipfsHash: ipfsResult.hash,
+      timestamp: new Date().toISOString()
+    };
+
+    // save the file metadata to blockchain
+    const client = await userService.validateUserAndEnrollById(payload.memberId, ['member']);
+    await fabricService.invokeChainCode(client, client.getChannel('topcoder-review'),
+      'projects', 'uploadSubmission', [JSON.stringify(chaincodePayload)], false);
+    return chaincodePayload;
+  } finally {
+    // remove the temp uploaded file
+    fs.unlink(file.path, () => {});
+  }
+}
+
+/**
+ * This is the schema for upload the submission.
+ */
+uploadSubmission.schema = {
+  file: Joi.object().keys({
+    path: Joi.string().required(),
+    originalname: Joi.string().required()
+  }).unknown().required(),
+  payload: Joi.object().keys({
+    challengeId: Joi.id(),
+    memberId: Joi.id(),
+    // this fileName is optional, if not set, use the original file name
+    // (i.e, the file name in local file system before uploading)
+    fileName: Joi.string(),
+    submissionId: Joi.id()
+  })
+};
+
+/**
+ * Downloads the submission.
+ * @param request the download request.
+ * @returns {Promise<{content: *, fileName: string}>} the download result.
+ */
+async function downloadSubmission(request) {
+  const client = await userService.validateUserAndEnrollById(request.memberId, ['member', 'manager', 'copilot']);
+  const submission = await fabricService.queryByChaincode(
+    client, client.getChannel('topcoder-review'), 'projects', 'getSubmission', [JSON.stringify(request)], false);
+  const result = await helper.ipfsGet(submission.ipfsHash);
+  return {
+    content: result.content,
+    fileName: submission.fileName
+  };
+}
+
+/**
+ * This is the schema of the request for download the submission.
+ */
+downloadSubmission.schema = {
+  request: Joi.object().keys({
+    memberId: Joi.id(),
+    submissionId: Joi.id(),
+    challengeId: Joi.id()
+  })
+};
 module.exports = {
   create,
   update,
   registerChallenge,
-  unregisterChallenge
+  unregisterChallenge,
+  uploadSubmission,
+  downloadSubmission
 };
 
 logger.buildService(module.exports);

@@ -40,6 +40,11 @@ const addRoutes = () => {
         next();
       });
 
+      // handler the multipart upload
+      if (method.uploader) {
+        actions.push(method.uploader);
+      }
+
       actions.push(method);
 
       app[verb](`/api/${config.version}${path}`, helper.autoWrapExpress(actions));

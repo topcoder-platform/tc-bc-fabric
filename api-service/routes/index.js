@@ -43,17 +43,25 @@ module.exports = {
       controller: 'ChallengeController', method: 'update'
     }
   },
+
+  '/challenges/:challengeId/submissions': {
+    post: {
+      controller: 'ChallengeController', method: 'uploadSubmission'
+    }
+  },
+
+  '/challenges/:challengeId/submissions/:submissionId': {
+    get: {
+      controller: 'ChallengeController', method: 'downloadSubmission'
+    }
+  },
+
   '/register': {
     post: {
       controller: 'ChallengeController', method: 'registerChallenge'
     },
     delete: {
       controller: 'ChallengeController', method: 'unregisterChallenge'
-    }
-  },
-  '/transaction': {
-    post: {
-      controller: 'ChaincodeController', method: 'getTransaction'
     }
   }
 

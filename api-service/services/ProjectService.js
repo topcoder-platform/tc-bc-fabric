@@ -16,12 +16,32 @@ const userService = require('./UserService');
 const fabricService = require('./FabricService');
 
 /**
+ * Checks if the copilot id is a real copilot or not.
+ * @param copilotId the copilot id.
+ * @returns {Promise<void>} the result, if not copilot, throws exception.
+ */
+async function validateCopilot(copilotId) {
+  const user = await userService.getById(copilotId);
+  if (!user) {
+    throw new errors.ValidationError('cannot find user of the copilot with id: ' + copilotId);
+  }
+  if (!user.roles || user.roles.indexOf('copilot') < 0) {
+    throw new errors.ValidationError('User with id: ' + copilotId + ' is not a copilot');
+  }
+}
+
+/**
  * Creates a project.
  * @param payload the payload.
  * @returns {Promise<*>} the result.
  */
 async function create(payload) {
   payload.status = 'draft';
+
+
+  if (payload.copilotId) {
+    await validateCopilot(payload.copilotId);
+  }
 
   const projectId = payload.projectId;
 
@@ -62,6 +82,10 @@ create.schema = {
  * @returns {Promise<*>} the result.
  */
 async function update(projectId, payload) {
+  if (payload.copilotId) {
+    await validateCopilot(payload.copilotId);
+  }
+
   const client = await userService.validateUserAndEnroll(payload.updatedBy, ['manager', 'client']);
 
   const eProject = await fabricService.queryByChaincode(client, client.getChannel('topcoder-client'),

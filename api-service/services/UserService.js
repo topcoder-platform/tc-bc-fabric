@@ -39,7 +39,7 @@ async function create(payload) {
   for (let i = 0; i < roles.length; i++) {
     const org = helper.roleToOrganization(roles[i]);
     if (!org) {
-      throw errors.BadRequestError(`unrecognized role: ${roles[i]}`);
+      throw new errors.BadRequestError(`unrecognized role: ${roles[i]}`);
     }
     if (registeredOrs[org]) {
       continue;
@@ -278,7 +278,8 @@ module.exports = {
   validateUserAndEnroll,
   validateUserAndEnrollById,
   create,
-  list
+  list,
+  getById
 };
 
 logger.buildService(module.exports);

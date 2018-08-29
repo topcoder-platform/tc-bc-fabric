@@ -5,6 +5,7 @@
 'use strict';
 const shim = require('fabric-shim');
 const _ = require('lodash');
+const errors = require('./errors');
 
 /**
  * This is the class for users chaincode.
@@ -36,7 +37,7 @@ let Chaincode = class {
     let method = this[ret.fcn];
     if (!method) {
       console.error('no function of name:' + ret.fcn + ' found');
-      throw new Error('Received unknown function ' + ret.fcn + ' invocation');
+      throw new errors.BadRequestError('Received unknown function ' + ret.fcn + ' invocation');
     }
     method = method.bind(this);
     try {
@@ -64,12 +65,12 @@ let Chaincode = class {
    */
   async createUser(stub, args) {
     if (args.length !== 1) {
-      throw new Error('Incorrect number of arguments. Expecting 1 (for payload)');
+      throw new errors.BadRequestError('Incorrect number of arguments. Expecting 1 (for payload)');
     }
 
     const payload = JSON.parse(args[0]);
     if (!payload.memberId || !payload.memberEmail) {
-      throw new Error('memberId and memberEmail are required');
+      throw new errors.ValidationError('memberId and memberEmail are required');
     }
 
     const userIdKey = `usr_id_${payload.memberId}`;
@@ -89,7 +90,7 @@ let Chaincode = class {
    */
   async getUserByEmail(stub, args) {
     if (args.length !== 1) {
-      throw new Error('Incorrect number of arguments. Expecting 1 (for email)');
+      throw new errors.BadRequestError('Incorrect number of arguments. Expecting 1 (for email)');
     }
     const email = args[0];
     const value = await stub.getState(`usr_email_${email}`);
@@ -107,7 +108,7 @@ let Chaincode = class {
    */
   async getUserById(stub, args) {
     if (args.length !== 1) {
-      throw new Error('Incorrect number of arguments. Expecting 1 (for id)');
+      throw new errors.BadRequestError('Incorrect number of arguments. Expecting 1 (for id)');
     }
     const userId = args[0];
     const value = await stub.getState(`usr_id_${userId}`);
@@ -144,7 +145,6 @@ let Chaincode = class {
       }
     }
   }
-
 };
 
-shim.start(new Chaincode());
+module.exports = Chaincode;

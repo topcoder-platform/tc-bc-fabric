@@ -12,7 +12,7 @@
         "content": "",
         "type": "text/plain"
       },
-      "value": "61e2fc97-6bea-42ef-bd2f-5df41b526faf",
+      "value": "2a0b4ab4-a1e1-4a66-ae5d-279a6b9c1f71",
       "key": "PROJECT_ID",
       "enabled": true
     },
@@ -21,7 +21,7 @@
         "content": "",
         "type": "text/plain"
       },
-      "value": "tcdeveloper-196@126.com",
+      "value": "tcdeveloper-743@126.com",
       "key": "OPERATOR_USER_EMAIL",
       "enabled": true
     },
@@ -30,12 +30,12 @@
         "content": "",
         "type": "text/plain"
       },
-      "value": "1d84c9e5-71ca-46a0-8aed-cbfa7c57baef",
+      "value": "46eb8ac4-ce5d-4f6a-9271-00d358cf9a1f",
       "key": "CHANLLEGE_ID",
       "enabled": true
     },
     {
-      "value": "05ec3818-3f5d-4a43-88e0-2be524308228",
+      "value": "75608364-bbc8-4e14-a201-db2bf9d9634d",
       "key": "OPERATOR_USER_ID",
       "enabled": true
     },
@@ -44,12 +44,67 @@
         "content": "",
         "type": "text/plain"
       },
-      "value": "tcdeveloper-196@126.com",
+      "value": "tcdeveloper-308@126.com",
       "key": "MEMBER_USER_EMAIL",
+      "enabled": true
+    },
+    {
+      "description": {
+        "content": "",
+        "type": "text/plain"
+      },
+      "value": "3646b0b0-314e-49ef-9a8b-8fed28cb68a5",
+      "key": "MEMBER_USER_ID",
+      "enabled": true
+    },
+    {
+      "description": {
+        "content": "",
+        "type": "text/plain"
+      },
+      "value": "1f24a42e-86ae-41f0-8c91-ec9c05e41274",
+      "key": "SUBMISSION_ID",
+      "enabled": true
+    },
+    {
+      "description": {
+        "content": "",
+        "type": "text/plain"
+      },
+      "value": "5f445949-dd05-47f3-96b4-b12e92971282",
+      "key": "COPILOT_USER_ID",
+      "enabled": true
+    },
+    {
+      "description": {
+        "content": "",
+        "type": "text/plain"
+      },
+      "value": "75608364-bbc8-4e14-a201-db2bf9d9634d",
+      "key": "MANAGER_USER_ID",
+      "enabled": true
+    },
+    {
+      "value": "tcdeveloper-743@126.com",
+      "key": "MANAGER_USER_EMAIL",
+      "enabled": true
+    },
+    {
+      "description": {
+        "content": "",
+        "type": "text/plain"
+      },
+      "value": "b06aafdf-6312-4548-a78f-9cc3911c3214",
+      "key": "MEMBER_USER_ID2",
+      "enabled": true
+    },
+    {
+      "value": "8f4a6862-98aa-4710-9836-5a0e86bd582e",
+      "key": "COPILOT_USER_ID2",
       "enabled": true
     }
   ],
   "_postman_variable_scope": "environment",
-  "_postman_exported_at": "2018-08-10T02:41:29.773Z",
-  "_postman_exported_using": "Postman/6.2.3"
+  "_postman_exported_at": "2018-08-20T00:50:17.971Z",
+  "_postman_exported_using": "Postman/6.2.4"
 }

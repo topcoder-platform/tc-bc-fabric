@@ -32,7 +32,8 @@ The app's configuration is in: [./config/default.js](./config/default.js)
 - logLevel - the logging level
 - version - the api version to construct the entrypoint of the api, like: /api/${version}
 - secretGenerateKey - the private key to generate the hash secret to enroll to CA.
-
+- fileUploadTMPDirectory - temporarily stores the uploaded multipart/form-data files.
+- ipfs - the ipfs configurations
 Also, some of the configurations can be set via environment variables, see:
 [./config/default.js](./config/custom-environment-variables.js)
 

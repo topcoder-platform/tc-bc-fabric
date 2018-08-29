@@ -6,7 +6,11 @@
 /**
  * This file defines helper methods.
  */
+const fs = require('fs');
+const config = require('config');
 const _ = require('lodash');
+const ipfsAPI = require('ipfs-api');
+const ipfs = ipfsAPI(config.ipfs);
 
 /**
  * Wrap generator function to standard express function.
@@ -41,6 +45,11 @@ function autoWrapExpress(obj) {
 }
 
 
+/**
+ * Converts the roles to the organization names.
+ * @param role the role
+ * @returns {*} the organization
+ */
 function roleToOrganization(role) {
   const mappings = {
     client: "Clients",
@@ -51,7 +60,45 @@ function roleToOrganization(role) {
   };
   return mappings[role];
 }
+
+/**
+ * Adds a file to ipfs.
+ * @param filePath the file path of the local file system.
+ * @returns {Promise<any>} the added file entity.
+ */
+function ipfsAdd(filePath) {
+  return new Promise((resolve, reject) => {
+    const stream = fs.createReadStream(filePath);
+    ipfs.files.add([{path: '/submissions', content: stream}], (err, res) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(res[0]);
+      }
+    });
+  });
+}
+
+/**
+ * Gets a file from ipfs.
+ * @param fileHash the hash of the file.
+ * @returns {Promise<any>} the file entity.
+ */
+function ipfsGet(fileHash) {
+  return new Promise((resolve, reject) => {
+    ipfs.files.get(fileHash, (err, res) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve(res[0]);
+      }
+    })
+  });
+}
+
 module.exports = {
   autoWrapExpress,
-  roleToOrganization
+  roleToOrganization,
+  ipfsAdd,
+  ipfsGet
 };

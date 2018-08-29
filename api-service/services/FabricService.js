@@ -84,6 +84,26 @@ async function enrollAdmin(client) {
   await client.createUser(options);
 }
 
+const convertErrorMessage = (err) => {
+  let message = err.message;
+  let status = 500;
+  if (message) {
+    const t = message.indexOf('transaction returned with failure: Error: ');
+    if (t >= 0) {
+      message = message.substring(t + 'transaction returned with failure: Error: '.length);
+    }
+  }
+  const extractRegex = /status: (.*) message: (.*)/g;
+  const result = extractRegex.exec(message);
+  if (result && result.length > 2) {
+    status = parseInt(result[1]);
+    message = result[2];
+  }
+  const newError = new Error(message);
+  newError.status = status;
+  return newError;
+};
+
 /**
  * Invokes the chaincode.
  * @param client the client.
@@ -117,24 +137,27 @@ async function invokeChainCode(client, channel, chaincode, fcn, args, useAdmin) 
     txId
   };
 
+
   const results = await channel.sendTransactionProposal(request);
+
 
   const proposalResponses = results[0];
   const proposal = results[1];
   let allGood = true;
-
+  let errorPr = null;
   proposalResponses.forEach((pr) => {
     let oneGood = false;
     if (pr.response && pr.response.status === 200) {
       oneGood = true;
-      console.info('transaction proposal was good');
-    } else {
-      console.error('transaction proposal was bad');
+    } else if (pr instanceof Error) {
+      errorPr = pr;
     }
     allGood = allGood && oneGood;
   });
 
-  if (!allGood) {
+  if (!allGood && errorPr) {
+    throw convertErrorMessage(errorPr);
+  } else if (!allGood) {
     throw new Error('no endorsers or some are not property connect');
   }
 
@@ -218,43 +241,23 @@ async function queryByChaincode(client, channel, chaincode, fcn, args, useAdmin)
   };
 
   const result = await channel.queryByChaincode(request, useAdmin);
+
   if (result.length === 0) {
     throw new Error('query by chain code must return at least one item');
+  }
+  if (result[0] instanceof Error) {
+    throw convertErrorMessage(result[0]);
   }
   const item = result[0].toString();
   if (!item) {
     return null;
   }
-  return JSON.parse(result.toString());
+  return JSON.parse(item);
 }
 
-async function getTransactionByID(client, channel, trxnID) {
-	try {
-    // first setup the client for this org
-    const targetPeers = channel.getChannelPeers().filter(p => p.isInRole("chaincodeQuery")
-    && p.isInOrg(client.getMspid()));
-
-    const targets = targetPeers.map(p => p.getName());
-
-    if (targetPeers.length === 0) {
-      throw new Error('cannot find any peers to query chaincode for channel: '
-        + channel.getName() + ' may be there is a configuration issue.');
-    }
-
-		let response_payload = await channel.queryTransaction(trxnID, targets[0]);
-		if (response_payload) {
-			return response_payload;
-		} else {
-			return 'response_payload is null';
-		}
-	} catch(error) {
-		return error.toString();
-	}
-};
 
 module.exports = {
   getClientForOrg,
   invokeChainCode,
-  queryByChaincode,
-  getTransactionByID
+  queryByChaincode
 };
