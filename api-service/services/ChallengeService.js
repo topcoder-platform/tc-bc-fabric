@@ -24,7 +24,7 @@ const _ = require('lodash');
  * @private
  */
 const __validatePhases = (phases) => {
-  const allPhasesNames = ['Register', 'Submission', 'Review', 'Appeal', 'AppealResponse'];
+  const allPhasesNames = ['Register', 'Submission', 'Review', 'Appeal', 'AppealResponse', 'Completed'];
   if (phases.length !== allPhasesNames.length) {
     throw new errors.ValidationError('The phases should exactly contains the phases: ' + allPhasesNames.join(','));
   }
@@ -60,6 +60,7 @@ async function create(operator, payload) {
   payload.createdBy = operator.memberId;
   payload.currentPhase = 'Pending';
   __validatePhases(payload.phases);
+  console.log(JSON.stringify(payload));
   payload.reviewTransactionId = await fabricService.invokeChainCode(client, client.getChannel('topcoder-review'),
     'topcoder-review', 'createChallenge', [JSON.stringify(payload)], false);
   return payload;
@@ -505,24 +506,29 @@ createAppealResponse.schema = {
  * @private
  */
 function __calculateReviewScoreForSingleReview(scorecard, review) {
-  const questionMappings = {};
-  _.forEach(scorecard.questions, question => {
-    questionMappings[question.order] = question;
-  });
-  let sum = 0;
-  _.forEach(review.reviews, reviewQuestion => {
-    const question = questionMappings[reviewQuestion.question];
-    if (!question) {
-      throw new errors.BadRequestError(
-        'cannot find question in scorecard with question order: ' + reviewQuestion.question);
+    const questionMappings = {};
+
+    for (let i = 0; i < scorecard.questions.length; i++) {
+        questionMappings[scorecard.questions[i].order] = scorecard.questions[i];
     }
-    let score = reviewQuestion.score;
-    if (reviewQuestion.appeal && !_.isNil(reviewQuestion.appeal.finalScore)) {
-      score = reviewQuestion.appeal.finalScore;
+
+    let sum = 0;
+    for (let i = 0; i < review.review.length; i++) {
+        const question = questionMappings[review.review[i].question];
+        if (!question) {
+            throw new errors.BadRequestError(
+                'cannot find question in scorecard with question order: ' + reviewQuestion.question);
+        }
+
+        let score = review.review[i].score;
+        if (review.review[i].appeal && !_.isNil(review.review[i].appeal.finalScore)) {
+            score = review.review[i].appeal.finalScore;
+        }
+
+        sum += question.weight * score;
     }
-    sum += question.weight * score;
-  });
-  return sum;
+
+    return sum;
 }
 
 /**
@@ -535,15 +541,17 @@ function __calculateReviewScoreForSingleReview(scorecard, review) {
 function __calculateReviewScore(scorecard, submission) {
   let sum = 0;
   let reviewCount = 0;
-  _.forEach(submission.reviews, review => {
+
+  for(let i = 0; i < submission.reviews.length; i++) {
     reviewCount++;
-    sum += __calculateReviewScoreForSingleReview(scorecard, review);
-  });
+    sum += __calculateReviewScoreForSingleReview(scorecard, submission.reviews[i]);    
+  }
+  
   if (reviewCount === 0) {
     return 0;
   }
-  // calculate the average, and round it to 2 digits.
-  return parseInt(sum / reviewCount * 100 + 0.5 + "") / 100;
+  
+  return sum;
 }
 
 /**
@@ -555,21 +563,24 @@ function __calculateReviewScore(scorecard, submission) {
 function __calculateChallengeWinners(challenge) {
   // calculate the winners
   let candidates = [];
-  _.forEach(challenge.submissions, submission => {
-    const score = __calculateReviewScore(challenge.scorecard, submission);
-    candidates.push({
-      memberId: submission.memberId,
-      score,
-      timestamp: submission.timestamp,
-      submission: {
-        submissionId: submission.submissionId,
-        originalFileName: submission.originalFileName,
-        fileName: submission.fileName,
-        ipfsHash: submission.ipfsHash,
-        timestamp: submission.timestamp
-      }
-    });
-  });
+
+    for(let i = 0; i < challenge.submissions.length; i++) {
+        let score = __calculateReviewScore(challenge.scorecard, challenge.submissions[i]);
+
+        candidates.push({
+            memberId: challenge.submissions[i].memberId,
+            score,
+            timestamp: challenge.submissions[i].timestamp,
+            submission: {
+            submissionId: challenge.submissions[i].submissionId,
+            originalFileName: challenge.submissions[i].originalFileName,
+            fileName: challenge.submissions[i].fileName,
+            ipfsHash: challenge.submissions[i].ipfsHash,
+            timestamp: challenge.submissions[i].timestamp
+            }
+        });
+    }
+
   candidates = candidates.sort((a, b) => {
     // compare the scores then the timestamp
     const d1 = new Date(a.timestamp).getTime();
@@ -586,6 +597,7 @@ function __calculateChallengeWinners(challenge) {
       return 0;
     }
   });
+
   const winners = [];
   for (let i = 0; i < candidates.length && i < challenge.prizes.winners.length; i++) {
     winners.push({
@@ -627,9 +639,7 @@ async function __onChallengeCompleted(app, challengeId) {
  */
 async function updateChallengePhase(app, challenge, phaseName) {
   const phases = JSON.parse(JSON.stringify(challenge.phases));
-  phases.push({
-    name: 'Completed'
-  });
+  console.log(phases)
   // update the times of the phases
   let index = -1;
   for (let i = 0; i < phases.length; i++) {

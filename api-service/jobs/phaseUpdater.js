@@ -82,7 +82,11 @@ const handleSubmissionPhase = async (challenge) => {
 const handleReviewPhase = async (challenge) => {
   // check if all the submissions has a review submitted
   // number of reviewers
-  const numberOfReviewers = challenge.reviewers.length || 0;
+  let numberOfReviewers;
+  if(challenge.reviewers) {
+    numberOfReviewers = challenge.reviewers.length || 0;    
+  }
+//   const numberOfReviewers = challenge.reviewers.length || 0;
   let ok = true;
   _.forEach(challenge.submissions, (submission) => {
     if (submission.reviews.length < numberOfReviewers) {
@@ -113,20 +117,24 @@ const handleAppealPhase = async (challenge) => {
  * @returns {Promise<void>} the phase.
  */
 const handleAppealResponsePhase = async (challenge) => {
-  let ok = true;
-  // all the appeals has response
-  _.forEach(challenge.submissions, (submission) => {
-    _.forEach(submission.reviews, (review) => {
-      if (review.appeal) {
-        if (!review.appeal.appealResponse || _.isNil(review.appeal.finalScore)) {
-          ok = false;
+    const phase = __getPhaseInfo(challenge, 'Completed');
+    if (new Date(phase.startDate).getTime() < new Date().getTime()) {
+        let ok = true;
+
+        for(let i = 0; i < challenge.submissions.length; i++) {
+            for(let j = 0; j < challenge.submissions[i].reviews.length; j++) {
+                if(challenge.submissions[i].reviews[j].appeal) {
+                    if (!review.appeal.appealResponse || _.isNil(review.appeal.finalScore)) {
+                        ok = false;
+                    }    
+                }
+            }
         }
-      }
-    })
-  });
-  if (ok) {
-    await __updateChallengePhase(challenge, 'Completed');
-  }
+
+        if (ok) {
+            await __updateChallengePhase(challenge, 'Completed');
+        }
+    }
 };
 
 
@@ -150,3 +158,4 @@ module.exports = async (expressApp) => {
     }
   }
 };
+
