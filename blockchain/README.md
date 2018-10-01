@@ -154,5 +154,5 @@ If still failed to you, update the following env variables in the `base/peer-bas
       - CORE_CHAINCODE_STARTUPTIMEOUT=1800s
 ```
 
-2). If you run the chaincode query command immediately after the chaincode invoke command, you many not query the new mutated data.
+2). If you run the chaincode query command immediately after the chaincode invoke command, you may not query the new mutated data.
 Because the chaincode invoke need sometime to commit to the blockchain. So, you'd better wait several seconds after you run the chaincode invoke command.

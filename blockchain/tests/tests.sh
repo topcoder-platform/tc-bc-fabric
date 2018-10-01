@@ -28,7 +28,13 @@ echo "retrieving all the users..."
 chaincodeQuery topcoder-review users '{"Args":["listUsers"]}' Topcoder 0
 
 echo "retrieving all the projects..."
-chaincodeQuery topcoder-client projects '{"Args":["listProjects"]}' Topcoder 0
+chaincodeQuery topcoder-client topcoder-client '{"Args":["listProjects"]}' Topcoder 0
 
 echo "retrieving all the projects..."
-chaincodeQuery topcoder-review projects '{"Args":["listProjects"]}' Topcoder 0
+chaincodeQuery topcoder-review topcoder-review '{"Args":["listProjects"]}' Topcoder 0
+
+echo "init the chain code"
+chaincodeQuery topcoder-review topcoder-review '{"Args":["Init"]}' Members 0
+
+echo "retrieving all the projects..."
+chaincodeQuery topcoder-review topcoder-review '{"Args":["listProjects"]}' Moderators 0

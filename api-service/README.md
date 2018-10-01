@@ -17,7 +17,7 @@ This is the deployment guide for PoC Challenge Review Process with Blockchain - 
 
     Read the blockchain [README.md](../blockchain/README.md) to setup the fabric network.
 
-    Make sure the Fabric blockchain netowork has been setup before setting up this API.
+    Make sure the Fabric blockchain network has been setup before setting up this API.
 
 ## Configuration
 
@@ -32,7 +32,8 @@ The app's configuration is in: [./config/default.js](./config/default.js)
 - logLevel - the logging level
 - version - the api version to construct the entrypoint of the api, like: /api/${version}
 - secretGenerateKey - the private key to generate the hash secret to enroll to CA.
-
+- fileUploadTMPDirectory - temporarily stores the uploaded multipart/form-data files.
+- ipfs - the ipfs configurations
 Also, some of the configurations can be set via environment variables, see:
 [./config/default.js](./config/custom-environment-variables.js)
 

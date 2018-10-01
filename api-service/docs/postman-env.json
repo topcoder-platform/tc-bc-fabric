@@ -12,7 +12,7 @@
         "content": "",
         "type": "text/plain"
       },
-      "value": "61e2fc97-6bea-42ef-bd2f-5df41b526faf",
+      "value": "d032fd06-9d23-46a6-be6a-a2b27a94e99c",
       "key": "PROJECT_ID",
       "enabled": true
     },
@@ -21,7 +21,7 @@
         "content": "",
         "type": "text/plain"
       },
-      "value": "tcdeveloper-196@126.com",
+      "value": "tcdeveloper-747@126.com",
       "key": "OPERATOR_USER_EMAIL",
       "enabled": true
     },
@@ -30,12 +30,12 @@
         "content": "",
         "type": "text/plain"
       },
-      "value": "1d84c9e5-71ca-46a0-8aed-cbfa7c57baef",
+      "value": "6ac56cdd-20a9-414d-9ec2-15615b01ef9d",
       "key": "CHANLLEGE_ID",
       "enabled": true
     },
     {
-      "value": "05ec3818-3f5d-4a43-88e0-2be524308228",
+      "value": "e2625e88-d6ec-4de7-9c43-9a726901267b",
       "key": "OPERATOR_USER_ID",
       "enabled": true
     },
@@ -44,12 +44,117 @@
         "content": "",
         "type": "text/plain"
       },
-      "value": "tcdeveloper-196@126.com",
+      "value": "tcdeveloper-550@126.com",
       "key": "MEMBER_USER_EMAIL",
+      "enabled": true
+    },
+    {
+      "description": {
+        "content": "",
+        "type": "text/plain"
+      },
+      "value": "bf0cb506-ec31-4af9-8b0e-cfe34e645e8b",
+      "key": "MEMBER_USER_ID",
+      "enabled": true
+    },
+    {
+      "description": {
+        "content": "",
+        "type": "text/plain"
+      },
+      "value": "1c03b3b7-64eb-47c9-a341-9f5def514780",
+      "key": "SUBMISSION_ID",
+      "enabled": true
+    },
+    {
+      "description": {
+        "content": "",
+        "type": "text/plain"
+      },
+      "value": "beaa160b-01b7-4ca9-9cab-26880fe8719b",
+      "key": "COPILOT_USER_ID",
+      "enabled": true
+    },
+    {
+      "description": {
+        "content": "",
+        "type": "text/plain"
+      },
+      "value": "21dc3371-120f-4651-abe6-c9f2be09f642",
+      "key": "MANAGER_USER_ID",
+      "enabled": true
+    },
+    {
+      "value": "tcdeveloper-747@126.com",
+      "key": "MANAGER_USER_EMAIL",
+      "enabled": true
+    },
+    {
+      "description": {
+        "content": "",
+        "type": "text/plain"
+      },
+      "value": "4219f417-a0b7-487c-8c58-938d32d961ca",
+      "key": "MEMBER_USER_ID2",
+      "enabled": true
+    },
+    {
+      "value": "844a99b9-3b78-4e98-a307-cfff87878589",
+      "key": "COPILOT_USER_ID2",
+      "enabled": true
+    },
+    {
+      "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImVtYWlsIjoidGNkZXZlbG9wZXItNzQ3QDEyNi5jb20iLCJpZCI6ImUyNjI1ZTg4LWQ2ZWMtNGRlNy05YzQzLTlhNzI2OTAxMjY3YiJ9LCJpYXQiOjE1MzU1NzIzNTZ9.a5pWkHsnjsj6TyAXWgYrqSwQtBDQxYgZf0XPEu5-CQw",
+      "key": "TOKEN",
+      "enabled": true
+    },
+    {
+      "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI3Mzg0OTRjMy05NTE5LTQ2NmQtODVhZC1iODQyODQyMTdhOTMiLCJ1c2VyIjp7ImVtYWlsIjoidGNkZXZlbG9wZXItNzk0QDEyNi5jb20iLCJpZCI6IjIxZGMzMzcxLTEyMGYtNDY1MS1hYmU2LWM5ZjJiZTA5ZjY0MiJ9LCJleHAiOjE1NjcxNTQwMzIsImlhdCI6MTUzNTYxODAzMn0.8JnDuZXnQX8gWkO7ISdYpoxKBnJNazrM6tbT_x3iGZw",
+      "key": "MANAGER_TOKEN",
+      "enabled": true
+    },
+    {
+      "value": "7949943f-3e6f-4b36-b31d-db417bc49c54",
+      "key": "CLIENT_USER_ID",
+      "enabled": true
+    },
+    {
+      "value": "02bfb3ee-4ec6-4fa4-b052-f6bab580fa19",
+      "key": "REVIEWER_USER_ID",
+      "enabled": true
+    },
+    {
+      "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJlMzBhOTk0Ny01MzhiLTQwNjgtOWY5My1mNDA5MjUzNDA5NGMiLCJ1c2VyIjp7ImVtYWlsIjoidGNkZXZlbG9wZXItMzY1QDEyNi5jb20iLCJpZCI6ImJlYWExNjBiLTAxYjctNGNhOS05Y2FiLTI2ODgwZmU4NzE5YiJ9LCJleHAiOjE1NjcxNTQwMzQsImlhdCI6MTUzNTYxODAzNH0.FxZLMddQnRW9h6nVfdfCJCdKVE7GRPCrnISya8Bm3-w",
+      "key": "COPILOT_TOKEN",
+      "enabled": true
+    },
+    {
+      "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2ZWFkYzYwMy1lYzU1LTQ0ZDctYmM0NC1iYmRjZTA5M2U1NjIiLCJ1c2VyIjp7ImVtYWlsIjoidGNkZXZlbG9wZXItODgzQDEyNi5jb20iLCJpZCI6ImJmMGNiNTA2LWVjMzEtNGFmOS04YjBlLWNmZTM0ZTY0NWU4YiJ9LCJleHAiOjE1NjcxNTQwMzcsImlhdCI6MTUzNTYxODAzN30.ElVBvKl7q1RH8M2JNbpKk77DwcINqN49HI09EbyEQNo",
+      "key": "MEMBER_TOKEN",
+      "enabled": true
+    },
+    {
+      "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI4ZDMyY2FkMC1kNTFhLTQxZDktYTQxNy05YTBjZWI2ZWJjMjQiLCJ1c2VyIjp7ImVtYWlsIjoidGNkZXZlbG9wZXItNzY1QDEyNi5jb20iLCJpZCI6IjAyYmZiM2VlLTRlYzYtNGZhNC1iMDUyLWY2YmFiNTgwZmExOSJ9LCJleHAiOjE1NjcxNTQwMzksImlhdCI6MTUzNTYxODAzOX0.DiEBqjwftyeFiQCiOB5pffwE1eSX7OvKfLcOQzUFJlM",
+      "key": "REVIEWER_TOKEN",
+      "enabled": true
+    },
+    {
+      "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxZmJiY2Y1My1hZWVlLTRmZDItYTViOC1kNGM3NTIwOGUzNjciLCJ1c2VyIjp7ImVtYWlsIjoidGNkZXZlbG9wZXItODQ3QDEyNi5jb20iLCJpZCI6Ijc5NDk5NDNmLTNlNmYtNGIzNi1iMzFkLWRiNDE3YmM0OWM1NCJ9LCJleHAiOjE1NjcxNTQwNDEsImlhdCI6MTUzNTYxODA0MX0.TiPg4PiW0kwYtKT7kqqAC3xDuUAi0oHf_HSfepFGwAc",
+      "key": "CLIENT_TOKEN",
+      "enabled": true
+    },
+    {
+      "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI4NGQ4ZGRjOC0xODc3LTRmZDktYmIzNC05NTZjODdhYjc5M2UiLCJ1c2VyIjp7ImVtYWlsIjoidGNkZXZlbG9wZXItNTU2QDEyNi5jb20iLCJpZCI6IjQyMTlmNDE3LWEwYjctNDg3Yy04YzU4LTkzOGQzMmQ5NjFjYSJ9LCJleHAiOjE1NjcxNTgzNzQsImlhdCI6MTUzNTYyMjM3NH0.V2YMZTAu59MzzPShZT1Jc-5ozTH6bDcc9tShKvwNLS8",
+      "key": "MEMBER_TOKEN2",
+      "enabled": true
+    },
+    {
+      "value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5NDg1MmVmZS1kNGYzLTQ3NWMtYTU3MC0yYjk3NzdjZDQzOGEiLCJ1c2VyIjp7ImVtYWlsIjoidGNkZXZlbG9wZXItNDUzQDEyNi5jb20iLCJpZCI6Ijg0NGE5OWI5LTNiNzgtNGU5OC1hMzA3LWNmZmY4Nzg3ODU4OSJ9LCJleHAiOjE1NjcxNTg1MDUsImlhdCI6MTUzNTYyMjUwNX0.S24Q4G0GWzr7UV4_swLA7xNJubEXw_OU9YBs5bSXEGI",
+      "key": "COPILOT_TOKEN2",
       "enabled": true
     }
   ],
   "_postman_variable_scope": "environment",
-  "_postman_exported_at": "2018-08-10T02:41:29.773Z",
-  "_postman_exported_using": "Postman/6.2.3"
+  "_postman_exported_at": "2018-08-30T10:10:32.412Z",
+  "_postman_exported_using": "Postman/6.2.5"
 }

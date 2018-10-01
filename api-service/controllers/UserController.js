@@ -30,7 +30,18 @@ async function list(req, res) {
   res.json(await service.list());
 }
 
+/**
+ * Logins a user.
+ * @param req the request.
+ * @param res the response
+ * @returns {Promise<void>}
+ */
+async function login(req, res) {
+  res.json(await service.login(req.body));
+}
+
 module.exports = {
   create,
-  list
+  list,
+  login
 };

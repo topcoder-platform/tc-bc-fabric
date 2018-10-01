@@ -13,7 +13,7 @@
 # set the peer's org and peer host
 ORGANIZATION=Topcoder
 ORGANIZATION_DOMAIN=topcoder.topcoder.com
-PEER_HOST=peer1.topcoder.topcoder.com
+PEER_HOST=peer0.topcoder.topcoder.com
 
 # set the environments (You don't have to change this section)
 CORE_PEER_LOCALMSPID=${ORGANIZATION}MSP

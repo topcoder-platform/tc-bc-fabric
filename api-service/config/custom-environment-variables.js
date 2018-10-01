@@ -8,6 +8,12 @@
  * @version 1.0
  */
 module.exports = {
-  "port": "PORT",
-  "secretGenerateKey": "SECRET_GENERATE_KEY"
+  port: "PORT",
+  secretGenerateKey: "SECRET_GENERATE_KEY",
+  jwtSecret: 'JWT_SECRET',
+  ipfs: {
+    host: "IPFS_HOST",
+    port: "IPFS_PORT",
+    protocol: "IPFS_PROTOCOL"
+  }
 };

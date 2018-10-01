@@ -1,0 +1,950 @@
+swagger: "2.0"
+info:
+  version: "v4"
+  title: "Blockchain API"
+# during production,should point to your server machine
+host: localhost:3000
+basePath: "/api/v1"
+# during production, should use https
+schemes:
+- "http"
+produces:
+- application/json
+consumes:
+- application/json
+
+securityDefinitions:
+  Bearer:
+    type: apiKey
+    name: Authorization
+    in: header
+
+paths:
+  /users:
+    get: 
+      summary: 'List all users'
+      description: 'List all users in organization.'
+      tags:
+        - Users
+      responses: 
+        "200":
+          description: "user response"
+          schema:
+            type: array 
+            items:
+              $ref: "#/definitions/User"
+        default: 
+          description: "unexpected error"
+          schema: 
+            $ref: "#/definitions/ErrorModel"
+    post:
+      summary: 'Creates an user'
+      description: 'Creates user in organization.'
+      tags:
+        - Users
+      parameters: 
+        - in: body
+          name: payload
+          description: "User to add in store"
+          required: true
+          schema: 
+            $ref: "#/definitions/User"
+      responses: 
+        "200":
+          description: "user response"
+          schema: 
+            $ref: "#/definitions/User"
+        "403": 
+          description: "unauthorized error"
+          schema: 
+            $ref: "#/definitions/ErrorModel"
+        "400": 
+          description: "bad request error"
+          schema: 
+            $ref: "#/definitions/ErrorModel"
+        "409": 
+          description: "conflict error"
+          schema: 
+            $ref: "#/definitions/ErrorModel"
+        default: 
+          description: "unexpected error"
+          schema: 
+            $ref: "#/definitions/ErrorModel"
+
+  /projects:
+    post:
+      summary: 'Create a project'
+      description: 'Will create a project. Needs manager role'
+      tags:
+        - Project
+      security: 
+        - Bearer: []
+      parameters:
+        - in: body
+          name: payload
+          schema:
+            $ref: '#/definitions/NewProject'
+      responses:
+        "200":
+          description: "project response"
+          schema: 
+            $ref: "#/definitions/Project"
+        "403": 
+          description: "unauthorized error"
+          schema: 
+            $ref: "#/definitions/ErrorModel"
+        "400": 
+          description: "bad request error"
+          schema: 
+            $ref: "#/definitions/ErrorModel"
+        "409": 
+          description: "conflict error"
+          schema: 
+            $ref: "#/definitions/ErrorModel"
+        default: 
+          description: "unexpected error"
+          schema: 
+            $ref: "#/definitions/ErrorModel"
+    get:
+      summary: 'List all projects'
+      description: 'Will list all projects. Needs client or manager role'
+      tags:
+        - Project
+      security: 
+        - Bearer: []
+      parameters:
+        - in: query
+          name: channel
+          type: string
+          description: to get the channel from which channel, defaults to 'topcoder-review'
+      responses: 
+        "200":
+          description: "project response"
+          schema:
+            type: array 
+            items:
+              $ref: "#/definitions/Project"
+        default:
+          description: "unexpected error"
+          schema: 
+            $ref: "#/definitions/ErrorModel"
+      
+  /projects/:id:
+    put:
+      summary: 'Update a project'
+      description: 'Will update a project. Needs manager who crewated the project'
+      tags:
+        - Project
+      security: 
+        - Bearer: []
+      parameters:
+        - in: body
+          name: payload
+          schema:
+            $ref: '#/definitions/UpdateProject'
+        - in: query
+          name: channel
+          type: string
+          description: to get the channel from which channel, defaults to 'topcoder-review'
+      responses:  
+        "200":
+          description: "project response"
+          schema: 
+            $ref: "#/definitions/Project"
+        "403": 
+          description: "unauthorized error"
+          schema: 
+            $ref: "#/definitions/ErrorModel"
+        "400": 
+          description: "bad request error"
+          schema: 
+            $ref: "#/definitions/ErrorModel"
+        default: 
+          description: "unexpected error"
+          schema: 
+            $ref: "#/definitions/ErrorModel"
+    get:
+      summary: 'Get a single project'
+      description: 'Will get a single project. Needs client or manager role'
+      tags:
+        - Project
+      security: 
+        - Bearer: []
+      responses: 
+        "200":
+          description: "project response"
+          schema:
+            type: array 
+            items:
+              $ref: '#/definitions/Project'
+        "404": 
+          description: "not found error"
+          schema: 
+            $ref: "#/definitions/ErrorModel"
+        default: 
+          description: "unexpected error"
+          schema: 
+            $ref: "#/definitions/ErrorModel"
+    parameters: 
+      - in: path
+        name: id
+        required: true
+        type: string
+
+  /challenges:
+    post:
+      summary: 'Create a challenge'
+      description: 'Will create a challenge. Needs copilot role'
+      tags:
+        - Challenge
+      security: 
+        - Bearer: []
+      parameters:
+        - in: body
+          name: payload
+          schema:
+            $ref: '#/definitions/NewChallenge'
+      responses:
+        "200":
+          description: "challenge response"
+          schema: 
+            $ref: "#/definitions/Challenge"
+        "403": 
+          description: "unauthorized error"
+          schema: 
+            $ref: "#/definitions/ErrorModel"
+        "400": 
+          description: "bad request error"
+          schema: 
+            $ref: "#/definitions/ErrorModel"
+        "409": 
+          description: "conflict error"
+          schema: 
+            $ref: "#/definitions/ErrorModel"
+        default: 
+          description: "unexpected error"
+          schema: 
+            $ref: "#/definitions/ErrorModel"
+    get:
+      summary: 'List all challenges'
+      description: 'Will list all challenges. All roles allowed'
+      tags:
+        - Challenge
+      responses: 
+        "200":
+          description: "challenge response"
+          schema:
+            type: array 
+            items:
+              $ref: "#/definitions/Challenge"
+        default: 
+          description: "unexpected error"
+          schema: 
+            $ref: "#/definitions/ErrorModel"
+
+  /challenges/:id:
+    put:
+      summary: 'Update a challenge'
+      description: 'Will update a challenge. Needs copilot who created the challenge'
+      tags:
+        - Challenge
+      security: 
+        - Bearer: []
+      parameters:
+        - in: body
+          name: payload
+          schema:
+            $ref: '#/definitions/UpdateChallenge'
+      responses:  
+        "200":
+          description: "challenge response"
+          schema: 
+            $ref: "#/definitions/Challenge"
+        "403": 
+          description: "unauthorized error"
+          schema: 
+            $ref: "#/definitions/ErrorModel"
+        "400": 
+          description: "bad request error"
+          schema: 
+            $ref: "#/definitions/ErrorModel"
+        default: 
+          description: "unexpected error"
+          schema: 
+            $ref: "#/definitions/ErrorModel"
+    get:
+      summary: 'Get a single challenge'
+      description: 'Will get a single challenge. All roles allowed'
+      tags:
+        - Challenge
+      responses: 
+        "200":
+          description: "challenge response"
+          schema:
+             $ref: '#/definitions/Challenge'
+        "404": 
+          description: "not found error"
+          schema: 
+            $ref: "#/definitions/ErrorModel"
+        default: 
+          description: "unexpected error"
+          schema: 
+            $ref: "#/definitions/ErrorModel"
+    parameters: 
+      - in: path
+        name: id
+        description: The challenge id
+        required: true
+        type: string
+
+  /challenges/:id/register:
+    post:
+      summary: 'Register to a challenge'
+      description: 'Will register to a challenge. Needs member role'
+      tags:
+        - Challenge
+      security: 
+        - Bearer: []
+      responses:  
+        "200":
+          description: "submission response"
+        "403": 
+          description: "unauthorized error"
+          schema: 
+            $ref: "#/definitions/ErrorModel"
+        default: 
+          description: "unexpected error"
+          schema: 
+            $ref: "#/definitions/ErrorModel"
+    delete:
+      summary: 'Un-register to a challenge'
+      description: 'Will un-register to a challenge. Needs member role'
+      tags:
+        - Challenge
+      security: 
+        - Bearer: []
+      responses:  
+        "200":
+          description: "submission response"
+        "403": 
+          description: "unauthorized error"
+          schema: 
+            $ref: "#/definitions/ErrorModel"
+        default: 
+          description: "unexpected error"
+          schema: 
+            $ref: "#/definitions/ErrorModel"
+    parameters: 
+      - in: path
+        name: id
+        description: The challenge id
+        required: true
+        type: string
+        
+  /challenges/:id/reviewer/:userId:
+    post:
+      summary: 'Register a reviewer to challenge'
+      description: 'Will register a reviewer to a challenge. Needs copilot role'
+      tags:
+        - Challenge
+      security: 
+        - Bearer: []
+      responses:  
+        "200":
+          description: "response"
+        "403": 
+          description: "unauthorized error"
+          schema: 
+            $ref: "#/definitions/ErrorModel"
+        default: 
+          description: "unexpected error"
+          schema: 
+            $ref: "#/definitions/ErrorModel"
+    delete:
+      summary: 'Un-register a reviewer to a challenge'
+      description: 'Will un-register a reviewer to a challenge. Needs copilot role'
+      tags:
+        - Challenge
+      security: 
+        - Bearer: []
+      responses:  
+        "200":
+          description: "response"
+        "403": 
+          description: "unauthorized error"
+          schema: 
+            $ref: "#/definitions/ErrorModel"
+        default: 
+          description: "unexpected error"
+          schema: 
+            $ref: "#/definitions/ErrorModel"
+    parameters: 
+      - in: path
+        name: id
+        description: The challenge id
+        required: true
+        type: string
+      - in: path
+        name: userId
+        description: The user id to add/remove as reviewer to challenge
+        required: true
+        type: string
+        
+  /challenges/:id/scorecard:
+    parameters: 
+      - in: path
+        name: id
+        description: The challenge id
+        required: true
+        type: string
+    post:
+      summary: 'Create a challenge scorecard'
+      description: 'Will create a challenge scorecard. Needs manager or copilot role'
+      tags:
+        - Challenge Review
+      security: 
+        - Bearer: []
+      parameters:
+        - in: body
+          name: payload
+          schema:
+            $ref: '#/definitions/Scorecard'
+      responses:  
+        "200":
+          description: "scorecard response"
+          schema: 
+            $ref: "#/definitions/Scorecard"
+        "403": 
+          description: "unauthorized error"
+          schema: 
+            $ref: "#/definitions/ErrorModel"
+        "400": 
+          description: "bad request error"
+          schema: 
+            $ref: "#/definitions/ErrorModel"
+        default: 
+          description: "unexpected error"
+          schema: 
+            $ref: "#/definitions/ErrorModel"
+
+  /challenges/:id/review:
+    parameters: 
+      - in: path
+        name: id
+        description: The challenge id
+        required: true
+        type: string
+    post:
+      summary: 'Create a challenge review'
+      description: 'Will create a challenge review. Needs reviewer role.reviewerId must match the id derived from authorization header and be part of challenge. A member with memberId must have a submission'
+      tags:
+        - Challenge Review
+      security: 
+        - Bearer: []
+      parameters:
+        - in: body
+          name: payload
+          schema:
+            $ref: '#/definitions/NewReview'
+      responses:  
+        "200":
+          description: "review response"
+          schema:
+            $ref: '#/definitions/NewReview'
+        "403": 
+          description: "unauthorized error"
+          schema: 
+            $ref: "#/definitions/ErrorModel"
+        "400": 
+          description: "bad request error"
+          schema: 
+            $ref: "#/definitions/ErrorModel"
+        default: 
+          description: "unexpected error"
+          schema: 
+            $ref: "#/definitions/ErrorModel"
+
+  /challenges/:id/appeals:
+    parameters: 
+      - in: path
+        name: id
+        description: The challenge id
+        required: true
+        type: string
+    post:
+      summary: 'Create a challenge appeal'
+      description: 'Will create a challenge appeal. Needs member role. The memberId must match the id derived from authorization header. A reviewer with reviewerId and memberId must exist.'
+      tags:
+        - Challenge Review
+      security: 
+        - Bearer: []
+      parameters:
+        - in: body
+          name: payload
+          schema:
+            $ref: '#/definitions/NewAppeal'
+      responses:  
+        "200":
+          schema:
+            $ref: '#/definitions/NewAppeal'
+          description: "appeal"
+        "403": 
+          description: "unauthorized error"
+          schema: 
+            $ref: "#/definitions/ErrorModel"
+        "400": 
+          description: "bad request error"
+          schema: 
+            $ref: "#/definitions/ErrorModel"
+        default: 
+          description: "unexpected error"
+          schema: 
+            $ref: "#/definitions/ErrorModel"
+
+  /challenges/:id/appealsResponse:
+    parameters: 
+      - in: path
+        name: id
+        description: The challenge id
+        required: true
+        type: string
+    post:
+      summary: 'Will update a challenge review'
+      description: 'Will update a challenge review (Appeals response). Needs reviewer role. reviewerId must match the id derived from authorization header and belong to challenge. A review with reviewerId and memberId must exist.'
+      tags:
+        - Challenge Review
+      security: 
+        - Bearer: []
+      parameters:
+        - in: body
+          name: payload
+          schema:
+            $ref: '#/definitions/NewAppealResponse'
+      responses:  
+        "200":
+          schema:
+            $ref: '#/definitions/NewAppealResponse'
+          description: "appeal response"
+        "403": 
+          description: "unauthorized error"
+          schema: 
+            $ref: "#/definitions/ErrorModel"
+        "400": 
+          description: "bad request error"
+          schema: 
+            $ref: "#/definitions/ErrorModel"
+        default: 
+          description: "unexpected error"
+          schema: 
+            $ref: "#/definitions/ErrorModel"
+            
+  /challenges/:id/submissions:
+    parameters: 
+      - in: path
+        name: id
+        description: The challenge id
+        required: true
+        type: string
+    post:
+      summary: 'Create a challenge submission'
+      description: 'Will create a challenge submission. Needs member role. memberId must match the id derived from authorization header'
+      tags:
+        - Challenge Submission
+      security: 
+        - Bearer: []
+      consumes:
+         - multipart/form-data
+      parameters:
+        - in: formData
+          name: file
+          type: file
+          description: The file to upload
+        - in: formData
+          name: memberId
+          type: string
+          description: The id of the member
+      responses:  
+        "200":
+          description: "submission response"
+          schema: 
+            $ref: "#/definitions/ChaincodeSubmission"
+        "403": 
+          description: "unauthorized error"
+          schema: 
+            $ref: "#/definitions/ErrorModel"
+        "400": 
+          description: "bad request error"
+          schema: 
+            $ref: "#/definitions/ErrorModel"
+        default: 
+          description: "unexpected error"
+          schema: 
+            $ref: "#/definitions/ErrorModel"
+
+  /challenges/:id/submissions/:submissionId:
+    get:
+      summary: 'Get a single challenge submission'
+      description: 'Will get a challenge submission. Member registered to challenge, copilot assigned to challenge and manger role are allowed.'
+      tags:
+        - Challenge Submission
+      security: 
+        - Bearer: []
+      responses: 
+        "200":
+          description: "submission file response"
+          schema:
+            type: file
+        "404": 
+          description: "not found error"
+          schema: 
+            $ref: "#/definitions/ErrorModel"
+        default: 
+          description: "unexpected error"
+          schema: 
+            $ref: "#/definitions/ErrorModel"
+    parameters: 
+      - in: path
+        name: id
+        description: The challenge id
+        required: true
+        type: string
+      - in: path
+        name: submissionId
+        description: The submission id
+        required: true
+        type: string
+  /challenges/:id/winning-submission:
+    get:
+      summary: 'Get the winning submission'
+      description: 'Will get a challenge winning submission. Only for client.'
+      tags:
+        - Challenge Submission
+      security:
+        - Bearer: []
+      responses:
+        "200":
+          description: "submission file response"
+          schema:
+            type: file
+        "404":
+          description: "not found error"
+          schema:
+            $ref: "#/definitions/ErrorModel"
+        default:
+          description: "unexpected error"
+          schema:
+            $ref: "#/definitions/ErrorModel"
+    parameters:
+      - in: path
+        name: id
+        description: The challenge id
+        required: true
+        type: string
+
+definitions:
+  NewAppealResponse:
+    type: object
+    required: 
+      - reviewerId
+      - memberId
+      - appealResponse
+    properties:
+      reviewerId:
+        type: string
+      memberId:
+        type: string
+      appealResponse:
+        type: object
+        required: 
+          - text
+          - finalScore
+          - question
+        properties:
+          text:
+            type: string
+          finalScore:
+            type: number
+          question:
+            type: number
+  NewAppeal:
+    type: object
+    required: 
+      - reviewerId
+      - memberId
+      - appeal
+    properties:
+      reviewerId:
+        type: string
+      memberId:
+        type: string
+      appeal:
+        type: object
+        required: 
+          - text
+          - question
+        properties:
+          text:
+            type: string
+          question:
+            type: number
+  NewReview:
+    type: object
+    required: 
+      - reviewerId
+      - memberId
+    properties:
+      reviewerId:
+        type: string
+      memberId:
+        type: string
+      review:
+        type: array
+        items:
+          properties:
+            score:
+              type: number
+            question:
+              type: number
+            comments:
+              type: string
+  Question:
+    type: object
+    required: 
+      - text
+      - order
+      - weight
+    properties:
+      text:
+        type: string
+      order:
+        type: number
+      weight:
+        type: number
+  Scorecard:
+    type: object
+    required: 
+      - name
+      - questions
+    properties:
+      name:
+        type: string
+      questions:
+        type: array
+        items:
+          $ref: '#/definitions/Question'
+  ChallengePhase:
+    type: object
+    properties:
+      name:
+        type: string
+      startDate:
+        type: string
+        format: 'date-time'
+      endDate:
+          type: string
+          format: 'date-time'
+  ChallengePrize:
+    type: object
+    properties:
+      winners:
+        type: array
+        items:
+          type: number
+      reviewer:
+        type: number
+      copilot:
+        type: number
+  Challenge:
+    type: object
+    properties:
+      challengeId: 
+        type: string
+        format: uuid
+      projectId:
+        type: string
+        format: uuid
+      name:
+        type: string
+      description:
+        type: string
+      scorecard:
+        $ref: '#/definitions/Scorecard'
+      phases:
+        type: array
+        items:
+          $ref: '#/definitions/ChallengePhase'
+      prizes:
+        $ref: '#/definitions/ChallengePrize'
+  UpdateChallenge:
+    type: object
+    required: 
+      - challengeId
+    properties:
+      challengeId:
+        type: string
+        format: uuid
+      name:
+        type: string
+      description:
+        type: string
+  NewChallenge:
+    type: object
+    required: 
+      - challengeId
+      - projectId
+      - name
+      - prizes
+      - phases
+    allOf: 
+      - $ref: '#/definitions/Challenge'
+  Project:
+    type: object
+    properties:
+      projectId:
+        type: string
+        format: uuid
+      clientId:
+        type: string
+        format: uuid
+      copilotId:
+        type: string
+        format: uuid
+      name:
+        type: string
+      description:
+        type: string
+      budget:
+        type: number
+        format: double
+      status:
+        type: string
+        enum: [active, draft]
+  UpdateProject:
+    type: object
+    required: 
+      - projectId
+    allOf: 
+      - $ref: '#/definitions/Project'
+  NewProject:
+    type: object
+    required: 
+      - projectId
+      - clientId
+      - name
+      - budget
+    allOf: 
+      - $ref: '#/definitions/Project'
+  User: 
+    type: object
+    required: 
+      - "memberId"
+      - "memberEmail"
+      - "roles"
+    properties: 
+      memberId: 
+        type: string
+      memberEmail: 
+        type: string
+        format: email
+      roles: 
+        type: string
+  ChaincodeAppeal:
+    type: object
+    properties:
+      appeal:
+        type: string
+      appealResponse:
+        type: string
+      finalScore:
+        type: number
+  ChaincodeReview:
+    type: object
+    required: 
+      - question
+      - score
+    properties:
+      question:
+        type: number
+      score:
+        type: number
+      appeal:
+        $ref: '#/definitions/ChaincodeAppeal'
+  ChaincodeReviews:
+    type: object
+    properties:
+      reviewerId:
+        type: string
+      reviews:
+        type: array
+        items:
+          $ref: '#/definitions/ChaincodeReview'
+  ChaincodeSubmission:
+    type: object
+    properties:
+      submissionId:
+        type: string
+      memberId:
+        type: string
+      originalFilename:
+        type: string
+      fileName:
+        type: string
+      ipfsHash:
+        type: string
+      timestamp:
+        type: string
+        format: date
+      reviews:
+        type: array
+        items:
+          $ref: '#/definitions/ChaincodeReviews'
+  ChaincodeReviewers:
+    type: object
+    allOf: 
+      - $ref: '#/definitions/User'
+  ChaincodeMember:
+    type: object
+    allOf: 
+      - $ref: '#/definitions/User'
+    properties:
+      status:
+        type: number
+  ChaincodeChallenge:
+    type: object
+    allOf: 
+      - $ref: '#/definitions/Challenge'
+    properties:
+      members:
+        type: array
+        items:
+          $ref: '#/definitions/ChaincodeMember'
+      reviewers:
+        type: array
+        items:
+          $ref: '#/definitions/ChaincodeReviewers'
+      submissions:
+        type: array
+        items:
+          $ref: '#/definitions/ChaincodeSubmission'
+  ChaincodeProject:
+    type: object
+    allOf: 
+      - $ref: '#/definitions/Project'
+    properties:
+      challenges: 
+        type: array
+        items:
+          $ref: '#/definitions/ChaincodeChallenge'
+  
+  ErrorModel: 
+    type: object
+    required: 
+      - "code"
+      - "message"
+    properties: 
+      code: 
+        type: integer
+        format: int32
+      message: 
+        type: string
+    

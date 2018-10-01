@@ -17,7 +17,7 @@ const service = require('../services/ProjectService');
  * @returns {Promise<void>} the promise of the result.
  */
 async function create(req, res) {
-  res.json(await service.create(req.body));
+  res.json(await service.create(req.user, req.body));
 }
 
 /**
@@ -27,7 +27,7 @@ async function create(req, res) {
  * @returns {Promise<void>} the promise of the result.
  */
 async function update(req, res) {
-  res.json(await service.update(req.params.projectId, req.body));
+  res.json(await service.update(req.user, req.params.projectId, req.body));
 }
 
 /**
@@ -37,7 +37,16 @@ async function update(req, res) {
  * @returns {Promise<void>} the promise of the result.
  */
 async function get(req, res) {
-  res.json(await service.get(req.params.projectId));
+  let channel = req.query.channel;
+  if (!channel) {
+    if (req.user.permittedRoles.indexOf('manager') >= 0) {
+      channel = 'topcoder-review';
+    } else {
+      channel = 'topcoder-client';
+    }
+  }
+
+  res.json(await service.get(req.user, req.params.projectId, channel));
 }
 
 /**
@@ -47,7 +56,15 @@ async function get(req, res) {
  * @returns {Promise<void>} the promise of the result.
  */
 async function list(req, res) {
-  res.json(await service.list(req.query.channel || 'topcoder-review'));
+  let channel = req.query.channel;
+  if (!channel) {
+    if (req.user.permittedRoles.indexOf('manager') >= 0) {
+      channel = 'topcoder-review';
+    } else {
+      channel = 'topcoder-client';
+    }
+  }
+  res.json(await service.list(req.user, channel));
 }
 
 module.exports = {

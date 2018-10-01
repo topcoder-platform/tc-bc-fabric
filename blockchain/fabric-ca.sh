@@ -9,7 +9,7 @@ CA_PROJECT_NAME="ca"
 function printHelp() {
   echo "Usage: "
   echo "  fabric-ca.sh <mode> [-f <docker-compose-file>]"
-  echo "    <mode> - one of 'up', 'down', 'restart', 'generate'"
+  echo "    <mode> - one of 'up', 'down'"
   echo "      - 'up' - bring up the fabric ca with docker-compose up"
   echo "      - 'down' - clear the fabric ca with docker-compose down"
   echo "    -f <docker-compose-file> - specify which docker-compose file use (defaults to fabric-ca/docker-compose.yaml)"

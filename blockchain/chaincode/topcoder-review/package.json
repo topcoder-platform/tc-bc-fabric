@@ -1,7 +1,7 @@
 {
-  "name": "users-chaincode",
+  "name": "projects-chaincode",
   "version": "1.0.0",
-  "description": "A topcoder users chaincode",
+  "description": "A topcoder projects chaincode",
   "main": "bootstrap.js",
   "scripts": {
     "start": "node bootstrap.js"

@@ -1,6 +1,6 @@
 {
-  "name": "api-service",
-  "version": "0.0.0",
+  "name": "tc-blockchain-api-service",
+  "version": "0.1.0",
   "private": true,
   "scripts": {
     "start": "rm -rf /tmp/hfc-* && node ./bin/www"
@@ -14,9 +14,14 @@
     "fabric-client": "^1.2.1",
     "get-parameter-names": "^0.3.0",
     "http-errors": "~1.6.2",
+    "ipfs-api": "^24.0.0",
     "joi": "^13.5.2",
+    "jsonwebtoken": "^8.3.0",
     "lodash": "^4.17.10",
+    "mime-types": "^2.1.19",
     "morgan": "~1.9.0",
-    "pug": "2.0.0-beta11"
+    "multer": "^1.3.1",
+    "pug": "2.0.0-beta11",
+    "uuid": "^3.3.2"
   }
 }
