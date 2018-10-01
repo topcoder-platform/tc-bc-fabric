@@ -1,0 +1,15 @@
+{
+  "name": "projects-chaincode",
+  "version": "1.0.0",
+  "description": "A topcoder projects chaincode",
+  "main": "bootstrap.js",
+  "scripts": {
+    "start": "node bootstrap.js"
+  },
+  "author": "tcdevelopers@topcoder.com",
+  "license": "ISC",
+  "dependencies": {
+    "fabric-shim": "^1.2.0",
+    "lodash": "^4.17.10"
+  }
+}

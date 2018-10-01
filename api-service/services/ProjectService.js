@@ -32,30 +32,41 @@ async function validateCopilot(copilotId) {
 
 /**
  * Creates a project.
+ * @param operator the user doing the current operation.
  * @param payload the payload.
  * @returns {Promise<*>} the result.
  */
-async function create(payload) {
+async function create(operator, payload) {
   payload.status = 'draft';
-
 
   if (payload.copilotId) {
     await validateCopilot(payload.copilotId);
   }
 
+  // validate the clientId is a client
+  const clientUser = await userService.getById(payload.clientId);
+  if (!clientUser) {
+    throw new errors.ValidationError('cannot find user of the client with id: ' + payload.clientId);
+  }
+  if (!clientUser.roles || clientUser.roles.indexOf('client') < 0) {
+    throw new errors.ValidationError('User with id: ' + copilotId + ' is not a client');
+  }
+
   const projectId = payload.projectId;
 
-  const client = await userService.validateUserAndEnroll(payload.createdBy, ['manager', 'client']);
+  payload.createdBy = operator.memberId;
+
+  const client = await userService.enrollUser(operator, operator.permittedRoles);
 
   const eProject = await fabricService.queryByChaincode(client, client.getChannel('topcoder-client'),
-    'projects', 'getProject', [projectId], false);
+    'topcoder-client', 'getProject', [projectId], false);
 
   if (eProject) {
     throw new errors.ConflictError(`project ${projectId} already exists.`);
   }
 
-  await fabricService.invokeChainCode(client, client.getChannel('topcoder-client'), 'projects', 'createProject',
-    [JSON.stringify(payload)], false);
+  payload.clientTransactionId = await fabricService.invokeChainCode(client,
+    client.getChannel('topcoder-client'), 'topcoder-client', 'createProject', [JSON.stringify(payload)], false);
 
   return payload;
 }
@@ -64,32 +75,40 @@ async function create(payload) {
  * The schema for create.
  */
 create.schema = {
+  operator: Joi.operator().required(),
   payload: Joi.object().keys({
     projectId: Joi.id(),
+    clientId: Joi.id(),
     copilotId: Joi.optionalId(),
     name: Joi.string().required(),
     description: Joi.string(),
     budget: Joi.number().min(0).required(),
-    status: Joi.string().valid('active', 'draft'),
-    createdBy: Joi.emailId()
-  })
+    status: Joi.string().valid('active', 'draft')
+  }).required()
 };
 
 /**
  * Updates a project.
+ * @param operator the current operator
  * @param projectId the id of the project.
  * @param payload the payload.
  * @returns {Promise<*>} the result.
  */
-async function update(projectId, payload) {
+async function update(operator, projectId, payload) {
+
   if (payload.copilotId) {
     await validateCopilot(payload.copilotId);
   }
 
-  const client = await userService.validateUserAndEnroll(payload.updatedBy, ['manager', 'client']);
+  let reviewTransactionId = null;
+  let clientTransactionId = null;
+
+  payload.updatedBy = operator.memberId;
+
+  const client = await userService.enrollUser(operator, operator.permittedRoles);
 
   const eProject = await fabricService.queryByChaincode(client, client.getChannel('topcoder-client'),
-    'projects', 'getProject', [projectId], false);
+    'topcoder-client', 'getProject', [projectId], false);
 
   if (eProject === null) {
     throw new errors.NotFoundError('cannot find project with id: ' + projectId);
@@ -105,36 +124,44 @@ async function update(projectId, payload) {
   }
 
   // update the project in topcoder-client channel
-  await fabricService.invokeChainCode(client, client.getChannel('topcoder-client'),
-    'projects', 'updateProject', [JSON.stringify(payload)], false);
+  clientTransactionId = await fabricService.invokeChainCode(client, client.getChannel('topcoder-client'),
+    'topcoder-client', 'updateProject', [JSON.stringify(payload)], false);
 
 
-  if (eProject.status === 'draft' && payload.status !== 'draft') {
+  if (eProject.status === 'draft' && payload.status && payload.status !== 'draft') {
     const updatedProject = await fabricService.queryByChaincode(client, client.getChannel('topcoder-client'),
-      'projects', 'getProject', [projectId], false);
+      'topcoder-client', 'getProject', [projectId], false);
     const topcoderReviewPayload = _.extend({}, updatedProject);
     delete topcoderReviewPayload.budget;
+    delete topcoderReviewPayload.clientId;
     // copy and create this project in topcoder-review channel
-    await fabricService.invokeChainCode(client, client.getChannel('topcoder-review'), 'projects', 'createProject',
+    reviewTransactionId = await fabricService.invokeChainCode(client, client.getChannel('topcoder-review'), 'topcoder-review', 'createProject',
       [JSON.stringify(topcoderReviewPayload)], false);
 
   } else if (eProject.status !== 'draft') {
     const topcoderReviewPayload = _.extend({}, payload);
     delete topcoderReviewPayload.budget;
+    delete topcoderReviewPayload.clientId;
     // update the project in topcoder-review channel
-    await fabricService.invokeChainCode(client, client.getChannel('topcoder-review'), 'projects', 'updateProject',
+    reviewTransactionId = await fabricService.invokeChainCode(client, client.getChannel('topcoder-review'), 'topcoder-review', 'updateProject',
       [JSON.stringify(topcoderReviewPayload)], false);
   }
 
   // return the result from the topcoder-client channel
-  return await fabricService.queryByChaincode(client, client.getChannel('topcoder-client'),
-    'projects', 'getProject', [projectId], false);
+  const result = await fabricService.queryByChaincode(client, client.getChannel('topcoder-client'),
+    'topcoder-client', 'getProject', [projectId], false);
+  result.clientTransactionId = clientTransactionId;
+  if (reviewTransactionId) {
+    result.reviewTransactionId = reviewTransactionId;
+  }
+  return result;
 }
 
 /**
  * The schema for update.
  */
 update.schema = {
+  operator: Joi.operator().required(),
   projectId: Joi.id(),
   payload: Joi.object().keys({
     projectId: Joi.id(),
@@ -142,46 +169,79 @@ update.schema = {
     name: Joi.string(),
     description: Joi.string(),
     budget: Joi.number().min(0),
-    status: Joi.string().valid('draft', 'active'),
-    updatedBy: Joi.emailId()
+    status: Joi.string().valid('draft', 'active')
   })
 };
 
 /**
  * Gets the project by id.
+ * @param operator the operator
  * @param projectId the id of the project.
  * @param channelName the channel name.
  * @returns {Promise<*>} the result.
  */
-async function get(projectId, channelName) {
-  const client = await fabricService.getClientForOrg('Topcoder');
-  return await fabricService.queryByChaincode(client, client.getChannel(channelName),
-    'projects', 'getProject', [projectId], true);
+async function get(operator, projectId, channelName) {
+  if (channelName === 'topcoder-review' && operator.permittedRoles.indexOf('manager') < 0) {
+    throw new errors.ForbiddenError('A client cannot access the topcoder-review channel data.');
+  }
+
+  if (channelName === 'topcoder-review') {
+    operator.permittedRoles = ['manager'];
+  }
+
+  let chaincodeName = null;
+  if (channelName === 'topcoder-review') {
+    chaincodeName = 'topcoder-review';
+  } else {
+    chaincodeName = 'topcoder-client';
+  }
+  const client = await userService.enrollUser(operator, operator.permittedRoles);
+  const project = await fabricService.queryByChaincode(client, client.getChannel(channelName),
+    chaincodeName, 'getProject', [projectId], false);
+  if (!project) {
+    throw new errors.BadRequestError('cannot find thie project with id: ' + projectId);
+  }
+  return project;
 }
 
 /**
  * The schema for get.
  */
 get.schema = {
+  operator: Joi.operator().required(),
   projectId: Joi.id(),
   channelName: Joi.string().valid('topcoder-client', 'topcoder-review').required()
 };
 
 /**
  * Lists the projects of a channel.
+ * @param operator, the current operator
  * @param channelName the name of the channel.
  * @returns {Promise<*>} the result.
  */
-async function list(channelName) {
-  const client = await fabricService.getClientForOrg('Topcoder');
+async function list(operator, channelName) {
+  if (channelName === 'topcoder-review' && operator.permittedRoles.indexOf('manager') < 0) {
+     throw new errors.ForbiddenError('A client cannot access the topcoder-review channel data.');
+  }
+  if (channelName === 'topcoder-review') {
+    operator.permittedRoles = ['manager'];
+  }
+  let chaincodeName = null;
+  if (channelName === 'topcoder-review') {
+    chaincodeName = 'topcoder-review';
+  } else {
+    chaincodeName = 'topcoder-client';
+  }
+  const client = await userService.enrollUser(operator, operator.permittedRoles);
   return await fabricService.queryByChaincode(client, client.getChannel(channelName),
-    'projects', 'listProjects', [], true);
+    chaincodeName, 'listProjects', [], false);
 }
 
 /**
  * The schema for list.
  */
 list.schema = {
+  operator: Joi.operator().required(),
   channelName: Joi.string().valid('topcoder-client', 'topcoder-review').required()
 };
 

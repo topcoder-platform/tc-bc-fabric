@@ -71,32 +71,39 @@ echo "Instantiating chaincode: users on peer0.Topcoder..."
 instantiateChaincode topcoder-review users Topcoder 0 $CHAIN_CODE_VERSION
 
 
-## Install chaincode: projects on peer0.Topcoder
-echo "Installing chaincode: projects on peer0.Topcoder..."
-installChaincode projects Topcoder 0 $CHAIN_CODE_VERSION
-echo "Instantiating chaincode: users on peer0.Topcoder..."
-instantiateChaincode topcoder-client projects Topcoder 0 $CHAIN_CODE_VERSION
-instantiateChaincode topcoder-review projects Topcoder 0 $CHAIN_CODE_VERSION
+## Install chaincode: topcoder-review on peer0.Topcoder
+echo "Installing chaincode: topcoder-review on peer0.Topcoder..."
+installChaincode topcoder-review Topcoder 0 $CHAIN_CODE_VERSION
+
+## Install chaincode: topcoder-client on peer0.Topcoder
+echo "Installing chaincode: topcoder-review on peer0.Topcoder..."
+installChaincode topcoder-client Topcoder 0 $CHAIN_CODE_VERSION
+
+echo "Instantiating chaincode: topcoder-client on peer0.Topcoder..."
+instantiateChaincode topcoder-client topcoder-client Topcoder 0 $CHAIN_CODE_VERSION
+
+echo "Instantiating chaincode: topcoder-review on peer0.Topcoder..."
+instantiateChaincode topcoder-review topcoder-review Topcoder 0 $CHAIN_CODE_VERSION
 
 
-echo "Installing chaincode: projects on peer0.Clients..."
-installChaincode projects Clients 0 $CHAIN_CODE_VERSION
+echo "Installing chaincode: topcoder-client on peer0.Clients..."
+installChaincode topcoder-client Clients 0 $CHAIN_CODE_VERSION
 
-echo "Installing chaincode: projects on peer0.Members..."
-installChaincode projects Members 0 $CHAIN_CODE_VERSION
+echo "Installing chaincode: topcoder-review on peer0.Members..."
+installChaincode topcoder-review Members 0 $CHAIN_CODE_VERSION
 
-echo "Installing chaincode: projects on peer0.Moderators..."
-installChaincode projects Moderators 0 $CHAIN_CODE_VERSION
+echo "Installing chaincode: topcoder-review on peer0.Moderators..."
+installChaincode topcoder-review Moderators 0 $CHAIN_CODE_VERSION
 
 
 echo "Prepare chaincode in peer0.Clients..."
-chaincodeQuery topcoder-client projects '{"Args":["Init"]}' Clients 0
+chaincodeQuery topcoder-client topcoder-client '{"Args":["Init"]}' Clients 0
 
 echo "Prepare chaincode in peer0.Members..."
-chaincodeQuery topcoder-review projects '{"Args":["Init"]}' Members 0
+chaincodeQuery topcoder-review topcoder-review '{"Args":["Init"]}' Members 0
 
 echo "Prepare chaincode in peer0.Moderators..."
-chaincodeQuery topcoder-review projects '{"Args":["Init"]}' Moderators 0
+chaincodeQuery topcoder-review topcoder-review '{"Args":["Init"]}' Moderators 0
 
 
 

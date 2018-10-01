@@ -17,6 +17,7 @@ const helper = require('../utils/helper');
 const logger = require('../utils/logger');
 const fabricService = require('./FabricService');
 
+
 /**
  * Creates a user.
  * @param payload the user payload.
@@ -49,7 +50,7 @@ async function create(payload) {
   }
 
   // add user to blockchain
-  await __createUserToBlockchain(payload);
+  payload.reviewTransactionId = await __createUserToBlockchain(payload);
 
   return payload;
 }
@@ -62,7 +63,7 @@ create.schema = {
     memberId: Joi.id(),
     memberEmail: Joi.emailId(),
     roles: Joi.array().items(Joi.roles().required()).required()
-  })
+  }).required()
 };
 
 
@@ -142,12 +143,11 @@ async function __createUserToCA(organization, payload) {
   // get the admin
   const registrarConfig = caService.getRegistrar();
   if (!registrarConfig || registrarConfig.length === 0) {
-    throw new Error('cannot get registrar from network configuration for organization: ' + organization);
+    throw errors.BadRequestError('cannot get registrar from network configuration for organization: ' + organization);
   }
   const registrar = registrarConfig[0];
   let adminUser = await client.getUserContext(registrar.enrollId, true);
   if (adminUser === null) {
-    console.log('cannot find the admin user at first time');
     adminUser = await client.setUserContext({username: registrar.enrollId, password: registrar.enrollSecret});
   }
 
@@ -165,7 +165,7 @@ async function __createUserToCA(organization, payload) {
     role: 'client',
     attrs: [
       {name: 'roles', value: roles.join(','), ecert: true},
-      {name: 'uerId', value: userId, ecert: true}
+      {name: 'userId', value: userId, ecert: true}
     ]
   }, adminUser);
 
@@ -195,7 +195,7 @@ async function __createUserToBlockchain(payload) {
   const channel = client.getChannel('topcoder-review');
 
   // invoke the chain code to commit the user to blockchain
-  await fabricService.invokeChainCode(client, channel, 'users', 'createUser', [JSON.stringify(payload)], true);
+  return await fabricService.invokeChainCode(client, channel, 'users', 'createUser', [JSON.stringify(payload)], true);
 }
 
 /**
@@ -205,16 +205,9 @@ async function __createUserToBlockchain(payload) {
  * @returns {Promise<*>} the result.
  * @private
  */
-async function __validateUserAndEnroll(user, permittedRoles) {
+async function __enrole(user, permittedRoles) {
   // validate the roles
-  let permittedRole = null;
-  for (let i = 0; i < permittedRoles.length; i++) {
-    const role = permittedRoles[i];
-    if (user.roles && user.roles.indexOf(role) >= 0) {
-      permittedRole = role;
-      break;
-    }
-  }
+  let permittedRole = permittedRoles[0];
 
   if (!permittedRole) {
     throw new errors.ForbiddenError('Only these roles can perform this action: ' + JSON.stringify(permittedRoles));
@@ -230,56 +223,64 @@ async function __validateUserAndEnroll(user, permittedRoles) {
   return client;
 }
 
+
+
 /**
- * Validates the user and enroll it via user email.
- * @param userEmail the user email.
+ * Validates the user and enroll it via user.
+ * @param user the user.
  * @param permittedRoles the permitted role.
  * @returns {Promise<*>} the promise.
  */
-async function validateUserAndEnroll(userEmail, permittedRoles) {
-  const user = await getByEmail(userEmail);
+async function enrollUser(user, permittedRoles) {
   if (!user) {
-    throw new errors.BadRequestError('cannot find user with email: ' + userEmail);
+    throw new errors.BadRequestError('cannot find user');
   }
-  return await __validateUserAndEnroll(user, permittedRoles);
-}
-
-/**
- * The validate schema.
- */
-validateUserAndEnroll.schema = {
-  userEmail: Joi.emailId(),
-  permittedRoles: Joi.array().items(Joi.roles()).required()
-};
-
-/**
- * Validates the user and enroll it via user id.
- * @param userId the user id.
- * @param permittedRoles the permitted role.
- * @returns {Promise<*>} the promise.
- */
-async function validateUserAndEnrollById(userId, permittedRoles) {
-  const user = await getById(userId);
-  if (!user) {
-    throw new errors.BadRequestError('cannot find user with id: ' + userId);
-  }
-  return await __validateUserAndEnroll(user, permittedRoles);
+  return await __enrole(user, permittedRoles);
 }
 
 /**
  * the validate schema.
  */
-validateUserAndEnrollById.schema = {
-  userId: Joi.id(),
+enrollUser.schema = {
+  user: Joi.operator().required(),
   permittedRoles: Joi.array().items(Joi.roles()).required()
 };
 
+
+/**
+ * Do the login.
+ * @param loginInfo the login request.
+ * @returns {Promise<{token: *}>} the promise of th eresult with token.
+ */
+async function login(loginInfo) {
+  // find the user from blockchain
+  const user = await getById(loginInfo.memberId);
+  if (!user) {
+    throw new errors.BadRequestError('cannot find user with memberId: ' + loginInfo.memberId);
+  }
+
+  const token = helper.generateJWTToken({
+    name: user.name,
+    email: user.memberEmail,
+    id: user.memberId
+  });
+  return {
+    token
+  };
+}
+
+login.schema = {
+  loginInfo: Joi.object().keys({
+    memberId: Joi.id()
+  }).required()
+};
+
 module.exports = {
-  validateUserAndEnroll,
-  validateUserAndEnrollById,
+  enrollUser,
   create,
   list,
-  getById
+  getById,
+  login
 };
 
 logger.buildService(module.exports);

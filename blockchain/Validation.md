@@ -27,17 +27,17 @@ you can see that all the above containers have been cleaned up.
 
 ## Manual Command Line Verification
 
-_NOTE, actually I have provided some scripts to verify the submission, so youdon't have to manually call the command line, so you can go to read the [Script Verificaton](#script-verification) section directly._
+_NOTE, actually I have provided some scripts to verify the submission, so you don't have to manually call the command line, so you can go to read the [Script Verificaton](#script-verification) section directly._
 
 All the peer commands you execute on the `cli` container. So in your local machine, you can run the peer command in this format:
 
 ```
 docker exec cli <YOUR_PEER_COMMAND_HERE>
 ```
-For example, to query the topcoder-review chaincode items, you can run:
+For example, to query the users chaincode items, you can run:
 
 ```
-docker exec cli peer chaincode query -C topcoder-review -n topcoder-review -c '{"Args":["listReviews"]}'
+docker exec cli peer chaincode query -C topcoder-review -n projects -c '{"Args":["listReviews"]}'
 ```
 
 #### Change the selected peer
@@ -73,11 +73,11 @@ _NOTE: All the chaincodes have been installed and instantiated in `scripts/insta
 
 To install the chaincode:
 ```
-docker exec cli peer chaincode install -n topcoder-review -v 1.0.0 -l node -p /opt/gopath/src/github.com/chaincode/topcoder-review
+docker exec cli peer chaincode install -n users -v 1.0.0 -l node -p /opt/gopath/src/github.com/chaincode/topcoder-review
 ```
 To instantiate in a channel.
 ```
-docker exec cli peer chaincode instantiate -o orderer.topcoder.com:7050 --tls true --cafile /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/topcoder.com/orderers/orderer.topcoder.com/msp/tlscacerts/tlsca.topcoder.com-cert.pem -C topcoder-review -n topcoder-review -l node -v 1.0.0 -c '{"Args":[]}'
+docker exec cli peer chaincode instantiate -o orderer.topcoder.com:7050 --tls true --cafile /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/topcoder.com/orderers/orderer.topcoder.com/msp/tlscacerts/tlsca.topcoder.com-cert.pem -C topcoder-review -n users -l projects -v 1.0.0 -c '{"Args":[]}'
 ```
 
 For more details for the chaincode commands, read: https://hyperledger-fabric.readthedocs.io/en/release-1.2/commands/peerchaincode.html
@@ -87,7 +87,7 @@ For more details for the chaincode commands, read: https://hyperledger-fabric.re
 The following command use the chaincode `topcoder-review` to create a review item and store it in blockchain.
 
 ```
-docker exec cli peer chaincode invoke -o orderer.topcoder.com:7050 --tls true --cafile /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/topcoder.com/orderers/orderer.topcoder.com/msp/tlscacerts/tlsca.topcoder.com-cert.pem -C topcoder-review -n topcoder-review --peerAddresses peer0.topcoder.topcoder.com:7051 --tlsRootCertFiles /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/topcoder.topcoder.com/peers/peer0.topcoder.topcoder.com/tls/ca.crt -c '{"Args":["createReview","rXf4xJOTJh"]}'
+docker exec cli peer chaincode invoke -o orderer.topcoder.com:7050 --tls true --cafile /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/ordererOrganizations/topcoder.com/orderers/orderer.topcoder.com/msp/tlscacerts/tlsca.topcoder.com-cert.pem -C topcoder-review -n projects --peerAddresses peer0.topcoder.topcoder.com:7051 --tlsRootCertFiles /opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/topcoder.topcoder.com/peers/peer0.topcoder.topcoder.com/tls/ca.crt -c '{"Args":["createReview","rXf4xJOTJh"]}'
 ```
 
 **Retrieve data from blockchain**
@@ -112,7 +112,7 @@ docker exec cli curl -s http://ipfs-node:5001/api/v0/cat/<FILE_HASH>
 
 ## Script Verification
 
-I provided 2 scripts for execute the often used peer commands. One is `./scripts/install.sh` and another is `./tests.tests.sh`.
+I provided 2 scripts for execute the often used peer commands. One is `./scripts/install.sh` and another is `./tests/tests.sh`.
 
 #### ./scripts/install.sh
 This script is automatically invoked when you run `./topcoder-review.sh up`. So you don't have to manually call it.

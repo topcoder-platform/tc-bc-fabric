@@ -14,12 +14,12 @@ export ARCH=$(echo "$(uname -s|tr '[:upper:]' '[:lower:]'|sed 's/mingw64_nt.*/wi
 export MARCH=$(uname -m)
 
 printHelp() {
-  echo "Usage: bootstrap.sh [<version>] [<ca_version>] [<thirdparty_version>][-d -b]"
+  echo "Usage: download.sh [<version>] [<ca_version>] [<thirdparty_version>][-d -b]"
   echo
   echo "-d - bypass docker image download"
   echo "-b - bypass download of platform-specific binaries"
   echo
-  echo "e.g. bootstrap.sh 1.1.1"
+  echo "e.g. download.sh 1.1.1"
   echo "would download docker images and binaries for version 1.1.1"
 }
 

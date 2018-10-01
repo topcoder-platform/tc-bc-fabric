@@ -6,103 +6,18 @@
 	},
 	"item": [
 		{
-			"name": "Projects",
+			"name": "Auth (TEST ONLY)",
 			"item": [
 				{
-					"name": "Failures",
-					"item": [
-						{
-							"name": "Create Project (MISSING FIELDS)",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"id": "1c088d85-de8c-4ad5-9d75-960ac9d296ea",
-										"type": "text/javascript",
-										"exec": [
-											""
-										]
-									}
-								}
-							],
-							"request": {
-								"method": "POST",
-								"header": [
-									{
-										"key": "Content-Type",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n\t\"projectId\": \"{{$guid}}\",\n\t\"name\": \"my project\",\n\t\"description\": \"this is my project\",\n\t\"createdBy\": \"{{OPERATOR_USER_EMAIL}}\"\n}"
-								},
-								"url": {
-									"raw": "{{URL}}/projects",
-									"host": [
-										"{{URL}}"
-									],
-									"path": [
-										"projects"
-									]
-								},
-								"description": "creates a project"
-							},
-							"response": []
-						},
-						{
-							"name": "Create Project (Invalid Role)",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"id": "1c088d85-de8c-4ad5-9d75-960ac9d296ea",
-										"type": "text/javascript",
-										"exec": [
-											""
-										]
-									}
-								}
-							],
-							"request": {
-								"method": "POST",
-								"header": [
-									{
-										"key": "Content-Type",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n\t\"projectId\": \"{{$guid}}\",\n\t\"name\": \"my project\",\n\t\"description\": \"this is my project\",\n\t\"budget\": 12345,\n\t\"createdBy\": \"{{MEMBER_USER_EMAIL}}\"\n}"
-								},
-								"url": {
-									"raw": "{{URL}}/projects",
-									"host": [
-										"{{URL}}"
-									],
-									"path": [
-										"projects"
-									]
-								},
-								"description": "creates a project"
-							},
-							"response": []
-						}
-					],
-					"_postman_isSubFolder": true
-				},
-				{
-					"name": "Create Project",
+					"name": "/login",
 					"event": [
 						{
 							"listen": "test",
 							"script": {
-								"id": "4d88dad9-2a2a-4eb3-9c2a-c42d9b494f9c",
+								"id": "528622c0-dcdc-4448-ac6e-da7b8326d48e",
 								"type": "text/javascript",
 								"exec": [
-									"pm.environment.set(\"PROJECT_ID\", pm.response.json().projectId);",
-									""
+									"pm.environment.set(\"TOKEN\", pm.response.json().token);"
 								]
 							}
 						}
@@ -117,974 +32,31 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n\t\"projectId\": \"{{$guid}}\",\n\t\"name\": \"my project\",\n\t\"description\": \"this is my project\",\n\t\"budget\": 12345,\n\t\"createdBy\": \"{{OPERATOR_USER_EMAIL}}\"\n}"
+							"raw": "{\n\t\"memberId\": \"{{OPERATOR_USER_ID}}\"\n}"
 						},
 						"url": {
-							"raw": "{{URL}}/projects",
+							"raw": "{{URL}}/login",
 							"host": [
 								"{{URL}}"
 							],
 							"path": [
-								"projects"
+								"login"
 							]
 						},
-						"description": "creates a project"
+						"description": "a fake login for generating the jwt token, it is just for test only"
 					},
 					"response": []
 				},
 				{
-					"name": "Update Project",
-					"request": {
-						"method": "PUT",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n\t\"projectId\": \"{{PROJECT_ID}}\",\n\t\"name\": \"my project (modified 2)\",\n\t\"updatedBy\": \"{{OPERATOR_USER_EMAIL}}\"\n}"
-						},
-						"url": {
-							"raw": "{{URL}}/projects/:projectId",
-							"host": [
-								"{{URL}}"
-							],
-							"path": [
-								"projects",
-								":projectId"
-							],
-							"variable": [
-								{
-									"key": "projectId",
-									"value": "{{PROJECT_ID}}"
-								}
-							]
-						},
-						"description": "creates a project"
-					},
-					"response": []
-				},
-				{
-					"name": "Update Project (update to active)",
-					"request": {
-						"method": "PUT",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n\t\"projectId\": \"{{PROJECT_ID}}\",\n\t\"status\": \"active\",\n\t\"updatedBy\": \"{{OPERATOR_USER_EMAIL}}\"\n}"
-						},
-						"url": {
-							"raw": "{{URL}}/projects/:projectId",
-							"host": [
-								"{{URL}}"
-							],
-							"path": [
-								"projects",
-								":projectId"
-							],
-							"variable": [
-								{
-									"key": "projectId",
-									"value": "{{PROJECT_ID}}"
-								}
-							]
-						},
-						"description": "creates a project"
-					},
-					"response": []
-				},
-				{
-					"name": "Update Project (set copilot)",
-					"request": {
-						"method": "PUT",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n\t\"projectId\": \"{{PROJECT_ID}}\",\n\t\"copilotId\": \"{{COPILOT_USER_ID}}\",\n\t\"updatedBy\": \"{{OPERATOR_USER_EMAIL}}\"\n}"
-						},
-						"url": {
-							"raw": "{{URL}}/projects/:projectId",
-							"host": [
-								"{{URL}}"
-							],
-							"path": [
-								"projects",
-								":projectId"
-							],
-							"variable": [
-								{
-									"key": "projectId",
-									"value": "{{PROJECT_ID}}"
-								}
-							]
-						},
-						"description": "creates a project"
-					},
-					"response": []
-				},
-				{
-					"name": "List Projects - topcoder-client channel (TEST ONLY)",
+					"name": "/login (manager)",
 					"event": [
 						{
 							"listen": "test",
 							"script": {
-								"id": "6d773618-10db-4adc-82de-082ffe40f379",
+								"id": "19c4715b-f221-4e8e-8b67-11f93c1fe46d",
 								"type": "text/javascript",
 								"exec": [
-									""
-								]
-							}
-						}
-					],
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
-						"url": {
-							"raw": "{{URL}}/projects?channel=topcoder-client",
-							"host": [
-								"{{URL}}"
-							],
-							"path": [
-								"projects"
-							],
-							"query": [
-								{
-									"key": "channel",
-									"value": "topcoder-client"
-								}
-							]
-						},
-						"description": "Lists the projects"
-					},
-					"response": []
-				},
-				{
-					"name": "List Projects - topcoder-review channel (TEST ONLY)",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"id": "6d773618-10db-4adc-82de-082ffe40f379",
-								"type": "text/javascript",
-								"exec": [
-									""
-								]
-							}
-						}
-					],
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": ""
-						},
-						"url": {
-							"raw": "{{URL}}/projects?channel=topcoder-review",
-							"host": [
-								"{{URL}}"
-							],
-							"path": [
-								"projects"
-							],
-							"query": [
-								{
-									"key": "channel",
-									"value": "topcoder-review"
-								}
-							]
-						},
-						"description": "Lists the projects"
-					},
-					"response": []
-				}
-			]
-		},
-		{
-			"name": "Challenges",
-			"item": [
-				{
-					"name": "Failures",
-					"item": [
-						{
-							"name": "Create Challenge (Invalid Project ID)",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"id": "5e21e9f6-6b7e-430e-af4e-108651f07fdb",
-										"type": "text/javascript",
-										"exec": [
-											""
-										]
-									}
-								}
-							],
-							"request": {
-								"method": "POST",
-								"header": [
-									{
-										"key": "Content-Type",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n   \"challengeId\": \"{{$guid}}\",\n   \"projectId\": \"xxxx\",\n   \"name\": \"A great name\",\n   \"description\": \"A long description\",\n   \"createdBy\": \"{{OPERATOR_USER_EMAIL}}\"\n}"
-								},
-								"url": {
-									"raw": "{{URL}}/challenges",
-									"host": [
-										"{{URL}}"
-									],
-									"path": [
-										"challenges"
-									]
-								},
-								"description": "creates a challenge"
-							},
-							"response": []
-						},
-						{
-							"name": "Create Challenge (Missing fields)",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"id": "5e21e9f6-6b7e-430e-af4e-108651f07fdb",
-										"type": "text/javascript",
-										"exec": [
-											""
-										]
-									}
-								}
-							],
-							"request": {
-								"method": "POST",
-								"header": [
-									{
-										"key": "Content-Type",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n   \"challengeId\": \"{{$guid}}\",\n   \"createdBy\": \"{{OPERATOR_USER_EMAIL}}\"\n}"
-								},
-								"url": {
-									"raw": "{{URL}}/challenges",
-									"host": [
-										"{{URL}}"
-									],
-									"path": [
-										"challenges"
-									]
-								},
-								"description": "creates a challenge"
-							},
-							"response": []
-						},
-						{
-							"name": "Register Challenge(Invalid Project ID)",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"id": "c98299f8-5eb8-4380-b884-7c093f3a6a10",
-										"type": "text/javascript",
-										"exec": [
-											"",
-											""
-										]
-									}
-								}
-							],
-							"request": {
-								"method": "POST",
-								"header": [
-									{
-										"key": "Content-Type",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n   \"memberId\": \"{{OPERATOR_USER_ID}}\",\n   \"challengeId\": \"{{CHANLLENGE_ID}}\",\n   \"projectId\": \"xxxx\"\n}"
-								},
-								"url": {
-									"raw": "{{URL}}/register",
-									"host": [
-										"{{URL}}"
-									],
-									"path": [
-										"register"
-									]
-								},
-								"description": "registers a challenge"
-							},
-							"response": []
-						},
-						{
-							"name": "Upload Submission (invalid role)",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"id": "e323a976-e534-4b9a-8f12-9ca4f1b30524",
-										"type": "text/javascript",
-										"exec": [
-											"",
-											""
-										]
-									}
-								}
-							],
-							"request": {
-								"method": "POST",
-								"header": [
-									{
-										"key": "Content-Type",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "formdata",
-									"formdata": [
-										{
-											"key": "file",
-											"sessionValue": {
-												"0": {}
-											},
-											"type": "file"
-										},
-										{
-											"key": "memberId",
-											"value": "{{COPILOT_USER_ID}}",
-											"sessionValue": "b",
-											"type": "text"
-										},
-										{
-											"key": "submissionId",
-											"value": "{{$guid}}",
-											"sessionValue": "123456",
-											"type": "text"
-										}
-									]
-								},
-								"url": {
-									"raw": "{{URL}}/challenges/:challengeId/submissions",
-									"host": [
-										"{{URL}}"
-									],
-									"path": [
-										"challenges",
-										":challengeId",
-										"submissions"
-									],
-									"variable": [
-										{
-											"key": "challengeId",
-											"value": "{{CHANLLEGE_ID}}"
-										}
-									]
-								},
-								"description": "Uploads a submission to the challenge"
-							},
-							"response": []
-						},
-						{
-							"name": "Upload Submission (not register member)",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"id": "e323a976-e534-4b9a-8f12-9ca4f1b30524",
-										"type": "text/javascript",
-										"exec": [
-											"",
-											""
-										]
-									}
-								}
-							],
-							"request": {
-								"method": "POST",
-								"header": [
-									{
-										"key": "Content-Type",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "formdata",
-									"formdata": [
-										{
-											"key": "file",
-											"sessionValue": {
-												"0": {}
-											},
-											"type": "file"
-										},
-										{
-											"key": "memberId",
-											"value": "{{MEMBER_USER_ID2}}",
-											"sessionValue": "b",
-											"type": "text"
-										},
-										{
-											"key": "submissionId",
-											"value": "{{$guid}}",
-											"sessionValue": "123456",
-											"type": "text"
-										}
-									]
-								},
-								"url": {
-									"raw": "{{URL}}/challenges/:challengeId/submissions",
-									"host": [
-										"{{URL}}"
-									],
-									"path": [
-										"challenges",
-										":challengeId",
-										"submissions"
-									],
-									"variable": [
-										{
-											"key": "challengeId",
-											"value": "{{CHANLLEGE_ID}}"
-										}
-									]
-								},
-								"description": "Uploads a submission to the challenge"
-							},
-							"response": []
-						},
-						{
-							"name": "Upload Submission (missing field)",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"id": "e323a976-e534-4b9a-8f12-9ca4f1b30524",
-										"type": "text/javascript",
-										"exec": [
-											"",
-											""
-										]
-									}
-								}
-							],
-							"request": {
-								"method": "POST",
-								"header": [
-									{
-										"key": "Content-Type",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "formdata",
-									"formdata": [
-										{
-											"key": "file",
-											"sessionValue": {
-												"0": {}
-											},
-											"type": "file"
-										},
-										{
-											"key": "memberId",
-											"value": "{{MEMBER_USER_ID}}",
-											"sessionValue": "b",
-											"type": "text"
-										},
-										{
-											"key": "submissionId",
-											"value": "{{$guid}}",
-											"sessionValue": "123456",
-											"type": "text",
-											"disabled": true
-										}
-									]
-								},
-								"url": {
-									"raw": "{{URL}}/challenges/:challengeId/submissions",
-									"host": [
-										"{{URL}}"
-									],
-									"path": [
-										"challenges",
-										":challengeId",
-										"submissions"
-									],
-									"variable": [
-										{
-											"key": "challengeId",
-											"value": "{{CHANLLEGE_ID}}"
-										}
-									]
-								},
-								"description": "Uploads a submission to the challenge"
-							},
-							"response": []
-						},
-						{
-							"name": "Download Submission (missing memberId)",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"id": "ce7bd2a1-ba3c-4d73-95fd-601cf05725ff",
-										"type": "text/javascript",
-										"exec": [
-											""
-										]
-									}
-								}
-							],
-							"request": {
-								"method": "GET",
-								"header": [
-									{
-										"key": "Content-Type",
-										"value": "application/json"
-									},
-									{
-										"key": "Cookie",
-										"value": "memberId={{MEMBER_USER_ID}}",
-										"disabled": true
-									}
-								],
-								"body": {
-									"mode": "formdata",
-									"formdata": [
-										{
-											"key": "file",
-											"value": "",
-											"sessionValue": null,
-											"type": "file"
-										},
-										{
-											"key": "fileName",
-											"value": "",
-											"sessionValue": null,
-											"type": "text"
-										},
-										{
-											"key": "memberId",
-											"value": "",
-											"sessionValue": null,
-											"type": "text"
-										}
-									]
-								},
-								"url": {
-									"raw": "{{URL}}/challenges/:challengeId/submissions/:submissionId",
-									"host": [
-										"{{URL}}"
-									],
-									"path": [
-										"challenges",
-										":challengeId",
-										"submissions",
-										":submissionId"
-									],
-									"variable": [
-										{
-											"key": "challengeId",
-											"value": "{{CHANLLEGE_ID}}"
-										},
-										{
-											"key": "submissionId",
-											"value": "{{SUBMISSION_ID}}"
-										}
-									]
-								},
-								"description": "Downloads a submission to the challenge"
-							},
-							"response": []
-						},
-						{
-							"name": "Download Submission (invalid submission id)",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"id": "ce7bd2a1-ba3c-4d73-95fd-601cf05725ff",
-										"type": "text/javascript",
-										"exec": [
-											""
-										]
-									}
-								}
-							],
-							"request": {
-								"method": "GET",
-								"header": [
-									{
-										"key": "Content-Type",
-										"value": "application/json"
-									},
-									{
-										"key": "Cookie",
-										"value": "memberId={{MEMBER_USER_ID}}"
-									}
-								],
-								"body": {
-									"mode": "formdata",
-									"formdata": [
-										{
-											"key": "file",
-											"value": "",
-											"sessionValue": null,
-											"type": "file"
-										},
-										{
-											"key": "fileName",
-											"value": "",
-											"sessionValue": null,
-											"type": "text"
-										},
-										{
-											"key": "memberId",
-											"value": "",
-											"sessionValue": null,
-											"type": "text"
-										}
-									]
-								},
-								"url": {
-									"raw": "{{URL}}/challenges/:challengeId/submissions/:submissionId",
-									"host": [
-										"{{URL}}"
-									],
-									"path": [
-										"challenges",
-										":challengeId",
-										"submissions",
-										":submissionId"
-									],
-									"variable": [
-										{
-											"key": "challengeId",
-											"value": "{{CHANLLEGE_ID}}"
-										},
-										{
-											"key": "submissionId",
-											"value": "1111"
-										}
-									]
-								},
-								"description": "Downloads a submission to the challenge"
-							},
-							"response": []
-						},
-						{
-							"name": "Download Submission (invalid challenge id)",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"id": "ce7bd2a1-ba3c-4d73-95fd-601cf05725ff",
-										"type": "text/javascript",
-										"exec": [
-											""
-										]
-									}
-								}
-							],
-							"request": {
-								"method": "GET",
-								"header": [
-									{
-										"key": "Content-Type",
-										"value": "application/json"
-									},
-									{
-										"key": "Cookie",
-										"value": "memberId={{MEMBER_USER_ID}}"
-									}
-								],
-								"body": {
-									"mode": "formdata",
-									"formdata": [
-										{
-											"key": "file",
-											"value": "",
-											"sessionValue": null,
-											"type": "file"
-										},
-										{
-											"key": "fileName",
-											"value": "",
-											"sessionValue": null,
-											"type": "text"
-										},
-										{
-											"key": "memberId",
-											"value": "",
-											"sessionValue": null,
-											"type": "text"
-										}
-									]
-								},
-								"url": {
-									"raw": "{{URL}}/challenges/:challengeId/submissions/:submissionId",
-									"host": [
-										"{{URL}}"
-									],
-									"path": [
-										"challenges",
-										":challengeId",
-										"submissions",
-										":submissionId"
-									],
-									"variable": [
-										{
-											"key": "challengeId",
-											"value": "111"
-										},
-										{
-											"key": "submissionId",
-											"value": "{{SUBMISSION_ID}}"
-										}
-									]
-								},
-								"description": "Downloads a submission to the challenge"
-							},
-							"response": []
-						},
-						{
-							"name": "Download Submission (not copilot of the project)",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"id": "ce7bd2a1-ba3c-4d73-95fd-601cf05725ff",
-										"type": "text/javascript",
-										"exec": [
-											""
-										]
-									}
-								}
-							],
-							"request": {
-								"method": "GET",
-								"header": [
-									{
-										"key": "Content-Type",
-										"value": "application/json"
-									},
-									{
-										"key": "Cookie",
-										"value": "memberId={{COPILOT_USER_ID2}}"
-									}
-								],
-								"body": {
-									"mode": "formdata",
-									"formdata": [
-										{
-											"key": "file",
-											"value": "",
-											"sessionValue": null,
-											"type": "file"
-										},
-										{
-											"key": "fileName",
-											"value": "",
-											"sessionValue": null,
-											"type": "text"
-										},
-										{
-											"key": "memberId",
-											"value": "",
-											"sessionValue": null,
-											"type": "text"
-										}
-									]
-								},
-								"url": {
-									"raw": "{{URL}}/challenges/:challengeId/submissions/:submissionId",
-									"host": [
-										"{{URL}}"
-									],
-									"path": [
-										"challenges",
-										":challengeId",
-										"submissions",
-										":submissionId"
-									],
-									"variable": [
-										{
-											"key": "challengeId",
-											"value": "{{CHANLLEGE_ID}}"
-										},
-										{
-											"key": "submissionId",
-											"value": "{{SUBMISSION_ID}}"
-										}
-									]
-								},
-								"description": "Downloads a submission to the challenge"
-							},
-							"response": []
-						},
-						{
-							"name": "Download Submission (not registered member)",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"id": "ce7bd2a1-ba3c-4d73-95fd-601cf05725ff",
-										"type": "text/javascript",
-										"exec": [
-											""
-										]
-									}
-								}
-							],
-							"request": {
-								"method": "GET",
-								"header": [
-									{
-										"key": "Content-Type",
-										"value": "application/json"
-									},
-									{
-										"key": "Cookie",
-										"value": "memberId={{MEMBER_USER_ID2}}"
-									}
-								],
-								"body": {
-									"mode": "formdata",
-									"formdata": [
-										{
-											"key": "file",
-											"value": "",
-											"sessionValue": null,
-											"type": "file"
-										},
-										{
-											"key": "fileName",
-											"value": "",
-											"sessionValue": null,
-											"type": "text"
-										},
-										{
-											"key": "memberId",
-											"value": "",
-											"sessionValue": null,
-											"type": "text"
-										}
-									]
-								},
-								"url": {
-									"raw": "{{URL}}/challenges/:challengeId/submissions/:submissionId",
-									"host": [
-										"{{URL}}"
-									],
-									"path": [
-										"challenges",
-										":challengeId",
-										"submissions",
-										":submissionId"
-									],
-									"variable": [
-										{
-											"key": "challengeId",
-											"value": "{{CHANLLEGE_ID}}"
-										},
-										{
-											"key": "submissionId",
-											"value": "{{SUBMISSION_ID}}"
-										}
-									]
-								},
-								"description": "Downloads a submission to the challenge"
-							},
-							"response": []
-						},
-						{
-							"name": "DeRegister Challenge (already submitted)",
-							"event": [
-								{
-									"listen": "test",
-									"script": {
-										"id": "c98299f8-5eb8-4380-b884-7c093f3a6a10",
-										"type": "text/javascript",
-										"exec": [
-											"",
-											""
-										]
-									}
-								}
-							],
-							"request": {
-								"method": "DELETE",
-								"header": [
-									{
-										"key": "Content-Type",
-										"value": "application/json"
-									}
-								],
-								"body": {
-									"mode": "raw",
-									"raw": "{\n   \"memberId\": \"{{OPERATOR_USER_ID}}\",\n   \"challengeId\": \"{{CHANLLEGE_ID}}\",\n   \"projectId\": \"{{PROJECT_ID}}\"\n}"
-								},
-								"url": {
-									"raw": "{{URL}}/register",
-									"host": [
-										"{{URL}}"
-									],
-									"path": [
-										"register"
-									]
-								},
-								"description": "registers a challenge"
-							},
-							"response": []
-						}
-					],
-					"_postman_isSubFolder": true
-				},
-				{
-					"name": "Create Challenge",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"id": "b7855fa4-2d62-48e7-a613-3ee5d7b38bab",
-								"type": "text/javascript",
-								"exec": [
-									"pm.environment.set(\"CHANLLEGE_ID\", pm.response.json().challengeId);",
-									""
+									"pm.environment.set(\"MANAGER_TOKEN\", pm.response.json().token);"
 								]
 							}
 						}
@@ -1099,78 +71,31 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n   \"challengeId\": \"{{$guid}}\",\n   \"projectId\": \"{{PROJECT_ID}}\",\n   \"name\": \"A great name\",\n   \"description\": \"A long description\",\n   \"createdBy\": \"{{OPERATOR_USER_EMAIL}}\"\n}"
+							"raw": "{\n\t\"memberId\": \"{{MANAGER_USER_ID}}\"\n}"
 						},
 						"url": {
-							"raw": "{{URL}}/challenges",
+							"raw": "{{URL}}/login",
 							"host": [
 								"{{URL}}"
 							],
 							"path": [
-								"challenges"
+								"login"
 							]
 						},
-						"description": "creates a project"
+						"description": "a fake login for generating the jwt token, it is just for test only"
 					},
 					"response": []
 				},
 				{
-					"name": "Update Challenge",
+					"name": "/login (copilot)",
 					"event": [
 						{
 							"listen": "test",
 							"script": {
-								"id": "0f3f5211-4f0c-477d-998a-a048026f1a62",
+								"id": "d6c1cd63-ac87-43f8-a4c0-f81421130607",
 								"type": "text/javascript",
 								"exec": [
-									""
-								]
-							}
-						}
-					],
-					"request": {
-						"method": "PUT",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n   \"challengeId\": \"{{CHANLLEGE_ID}}\",\n   \"name\": \"A great name modified\",\n   \"updatedBy\": \"{{OPERATOR_USER_EMAIL}}\"\n}"
-						},
-						"url": {
-							"raw": "{{URL}}/challenges/:challengeId",
-							"host": [
-								"{{URL}}"
-							],
-							"path": [
-								"challenges",
-								":challengeId"
-							],
-							"variable": [
-								{
-									"key": "challengeId",
-									"value": "{{CHANLLEGE_ID}}"
-								}
-							]
-						},
-						"description": "udpates a challenge"
-					},
-					"response": []
-				},
-				{
-					"name": "Register Challenge",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"id": "c98299f8-5eb8-4380-b884-7c093f3a6a10",
-								"type": "text/javascript",
-								"exec": [
-									"",
-									""
+									"pm.environment.set(\"COPILOT_TOKEN\", pm.response.json().token);"
 								]
 							}
 						}
@@ -1185,38 +110,37 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n   \"memberId\": \"{{OPERATOR_USER_ID}}\",\n   \"challengeId\": \"{{CHANLLEGE_ID}}\",\n   \"projectId\": \"{{PROJECT_ID}}\"\n}"
+							"raw": "{\n\t\"memberId\": \"{{COPILOT_USER_ID}}\"\n}"
 						},
 						"url": {
-							"raw": "{{URL}}/register",
+							"raw": "{{URL}}/login",
 							"host": [
 								"{{URL}}"
 							],
 							"path": [
-								"register"
+								"login"
 							]
 						},
-						"description": "registers a challenge"
+						"description": "a fake login for generating the jwt token, it is just for test only"
 					},
 					"response": []
 				},
 				{
-					"name": "DeRegister Challenge",
+					"name": "/login (copilot 2)",
 					"event": [
 						{
 							"listen": "test",
 							"script": {
-								"id": "c98299f8-5eb8-4380-b884-7c093f3a6a10",
+								"id": "a4ba28b5-16e1-456e-8479-9d1da48590cd",
 								"type": "text/javascript",
 								"exec": [
-									"",
-									""
+									"pm.environment.set(\"COPILOT_TOKEN2\", pm.response.json().token);"
 								]
 							}
 						}
 					],
 					"request": {
-						"method": "DELETE",
+						"method": "POST",
 						"header": [
 							{
 								"key": "Content-Type",
@@ -1225,32 +149,31 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n   \"memberId\": \"{{OPERATOR_USER_ID}}\",\n   \"challengeId\": \"{{CHANLLEGE_ID}}\",\n   \"projectId\": \"{{PROJECT_ID}}\"\n}"
+							"raw": "{\n\t\"memberId\": \"{{COPILOT_USER_ID2}}\"\n}"
 						},
 						"url": {
-							"raw": "{{URL}}/register",
+							"raw": "{{URL}}/login",
 							"host": [
 								"{{URL}}"
 							],
 							"path": [
-								"register"
+								"login"
 							]
 						},
-						"description": "registers a challenge"
+						"description": "a fake login for generating the jwt token, it is just for test only"
 					},
 					"response": []
 				},
 				{
-					"name": "Upload Submission",
+					"name": "/login (member)",
 					"event": [
 						{
 							"listen": "test",
 							"script": {
-								"id": "d066daf3-d611-413b-a489-035dacc1965e",
+								"id": "d0c89d91-3795-41ce-9b6e-24ecec76cf1d",
 								"type": "text/javascript",
 								"exec": [
-									"pm.environment.set(\"SUBMISSION_ID\", pm.response.json().submissionId);",
-									""
+									"pm.environment.set(\"MEMBER_TOKEN\", pm.response.json().token);"
 								]
 							}
 						}
@@ -1264,61 +187,32 @@
 							}
 						],
 						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "file",
-									"sessionValue": {
-										"0": {}
-									},
-									"type": "file"
-								},
-								{
-									"key": "memberId",
-									"value": "{{MEMBER_USER_ID}}",
-									"sessionValue": "b",
-									"type": "text"
-								},
-								{
-									"key": "submissionId",
-									"value": "{{$guid}}",
-									"sessionValue": "123456",
-									"type": "text"
-								}
-							]
+							"mode": "raw",
+							"raw": "{\n\t\"memberId\": \"{{MEMBER_USER_ID}}\"\n}"
 						},
 						"url": {
-							"raw": "{{URL}}/challenges/:challengeId/submissions",
+							"raw": "{{URL}}/login",
 							"host": [
 								"{{URL}}"
 							],
 							"path": [
-								"challenges",
-								":challengeId",
-								"submissions"
-							],
-							"variable": [
-								{
-									"key": "challengeId",
-									"value": "{{CHANLLEGE_ID}}"
-								}
+								"login"
 							]
 						},
-						"description": "Uploads a submission to the challenge"
+						"description": "a fake login for generating the jwt token, it is just for test only"
 					},
 					"response": []
 				},
 				{
-					"name": "Upload Submission (given fileName)",
+					"name": "/login (member2)",
 					"event": [
 						{
 							"listen": "test",
 							"script": {
-								"id": "d066daf3-d611-413b-a489-035dacc1965e",
+								"id": "e29fb9b1-d4a1-4c32-aaec-7160fbc971e6",
 								"type": "text/javascript",
 								"exec": [
-									"pm.environment.set(\"SUBMISSION_ID\", pm.response.json().submissionId);",
-									""
+									"pm.environment.set(\"MEMBER_TOKEN2\", pm.response.json().token);"
 								]
 							}
 						}
@@ -1332,377 +226,99 @@
 							}
 						],
 						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "file",
-									"sessionValue": {
-										"0": {}
-									},
-									"type": "file"
-								},
-								{
-									"key": "fileName",
-									"value": "test-file.zip",
-									"sessionValue": "a",
-									"type": "text"
-								},
-								{
-									"key": "memberId",
-									"value": "{{MEMBER_USER_ID}}",
-									"sessionValue": "b",
-									"type": "text"
-								},
-								{
-									"key": "submissionId",
-									"value": "{{$guid}}",
-									"sessionValue": "123456",
-									"type": "text"
-								}
-							]
+							"mode": "raw",
+							"raw": "{\n\t\"memberId\": \"{{MEMBER_USER_ID2}}\"\n}"
 						},
 						"url": {
-							"raw": "{{URL}}/challenges/:challengeId/submissions",
+							"raw": "{{URL}}/login",
 							"host": [
 								"{{URL}}"
 							],
 							"path": [
-								"challenges",
-								":challengeId",
-								"submissions"
-							],
-							"variable": [
-								{
-									"key": "challengeId",
-									"value": "{{CHANLLEGE_ID}}"
-								}
+								"login"
 							]
 						},
-						"description": "Uploads a submission to the challenge"
+						"description": "a fake login for generating the jwt token, it is just for test only"
 					},
 					"response": []
 				},
 				{
-					"name": "Download Submission",
+					"name": "/login (reviewer)",
 					"event": [
 						{
 							"listen": "test",
 							"script": {
-								"id": "ce7bd2a1-ba3c-4d73-95fd-601cf05725ff",
+								"id": "13fd8e1f-292b-4afe-b620-c3c9e9aa173e",
 								"type": "text/javascript",
 								"exec": [
-									""
+									"pm.environment.set(\"REVIEWER_TOKEN\", pm.response.json().token);"
 								]
 							}
 						}
 					],
 					"request": {
-						"method": "GET",
+						"method": "POST",
 						"header": [
 							{
 								"key": "Content-Type",
 								"value": "application/json"
-							},
-							{
-								"key": "Cookie",
-								"value": "memberId={{MEMBER_USER_ID}}"
 							}
 						],
 						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "file",
-									"value": "",
-									"sessionValue": null,
-									"type": "file"
-								},
-								{
-									"key": "fileName",
-									"value": "",
-									"sessionValue": null,
-									"type": "text"
-								},
-								{
-									"key": "memberId",
-									"value": "",
-									"sessionValue": null,
-									"type": "text"
-								}
-							]
+							"mode": "raw",
+							"raw": "{\n\t\"memberId\": \"{{REVIEWER_USER_ID}}\"\n}"
 						},
 						"url": {
-							"raw": "{{URL}}/challenges/:challengeId/submissions/:submissionId",
+							"raw": "{{URL}}/login",
 							"host": [
 								"{{URL}}"
 							],
 							"path": [
-								"challenges",
-								":challengeId",
-								"submissions",
-								":submissionId"
-							],
-							"variable": [
-								{
-									"key": "challengeId",
-									"value": "{{CHANLLEGE_ID}}"
-								},
-								{
-									"key": "submissionId",
-									"value": "{{SUBMISSION_ID}}"
-								}
+								"login"
 							]
 						},
-						"description": "Downloads a submission to the challenge"
+						"description": "a fake login for generating the jwt token, it is just for test only"
 					},
 					"response": []
 				},
 				{
-					"name": "Download Submission (manager)",
+					"name": "/login (client)",
 					"event": [
 						{
 							"listen": "test",
 							"script": {
-								"id": "ce7bd2a1-ba3c-4d73-95fd-601cf05725ff",
+								"id": "02b4a0d0-bf8b-4eeb-8306-56adad8bcf25",
 								"type": "text/javascript",
 								"exec": [
-									""
+									"pm.environment.set(\"CLIENT_TOKEN\", pm.response.json().token);"
 								]
 							}
 						}
 					],
 					"request": {
-						"method": "GET",
+						"method": "POST",
 						"header": [
 							{
 								"key": "Content-Type",
 								"value": "application/json"
-							},
-							{
-								"key": "Cookie",
-								"value": "memberId={{MANAGER_USER_ID}}"
 							}
 						],
 						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "file",
-									"value": "",
-									"sessionValue": null,
-									"type": "file"
-								},
-								{
-									"key": "fileName",
-									"value": "",
-									"sessionValue": null,
-									"type": "text"
-								},
-								{
-									"key": "memberId",
-									"value": "",
-									"sessionValue": null,
-									"type": "text"
-								}
-							]
+							"mode": "raw",
+							"raw": "{\n\t\"memberId\": \"{{CLIENT_USER_ID}}\"\n}"
 						},
 						"url": {
-							"raw": "{{URL}}/challenges/:challengeId/submissions/:submissionId",
+							"raw": "{{URL}}/login",
 							"host": [
 								"{{URL}}"
 							],
 							"path": [
-								"challenges",
-								":challengeId",
-								"submissions",
-								":submissionId"
-							],
-							"variable": [
-								{
-									"key": "challengeId",
-									"value": "{{CHANLLEGE_ID}}"
-								},
-								{
-									"key": "submissionId",
-									"value": "{{SUBMISSION_ID}}"
-								}
+								"login"
 							]
 						},
-						"description": "Downloads a submission to the challenge"
+						"description": "a fake login for generating the jwt token, it is just for test only"
 					},
 					"response": []
-				},
-				{
-					"name": "Download Submission (copilot)",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"id": "ce7bd2a1-ba3c-4d73-95fd-601cf05725ff",
-								"type": "text/javascript",
-								"exec": [
-									""
-								]
-							}
-						}
-					],
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							},
-							{
-								"key": "Cookie",
-								"value": "memberId={{COPILOT_USER_ID}}"
-							}
-						],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "file",
-									"value": "",
-									"sessionValue": null,
-									"type": "file"
-								},
-								{
-									"key": "fileName",
-									"value": "",
-									"sessionValue": null,
-									"type": "text"
-								},
-								{
-									"key": "memberId",
-									"value": "",
-									"sessionValue": null,
-									"type": "text"
-								}
-							]
-						},
-						"url": {
-							"raw": "{{URL}}/challenges/:challengeId/submissions/:submissionId",
-							"host": [
-								"{{URL}}"
-							],
-							"path": [
-								"challenges",
-								":challengeId",
-								"submissions",
-								":submissionId"
-							],
-							"variable": [
-								{
-									"key": "challengeId",
-									"value": "{{CHANLLEGE_ID}}"
-								},
-								{
-									"key": "submissionId",
-									"value": "{{SUBMISSION_ID}}"
-								}
-							]
-						},
-						"description": "Downloads a submission to the challenge"
-					},
-					"response": []
-				},
-				{
-					"name": "Download Submission (registered member)",
-					"event": [
-						{
-							"listen": "test",
-							"script": {
-								"id": "ce7bd2a1-ba3c-4d73-95fd-601cf05725ff",
-								"type": "text/javascript",
-								"exec": [
-									""
-								]
-							}
-						}
-					],
-					"request": {
-						"method": "GET",
-						"header": [
-							{
-								"key": "Content-Type",
-								"value": "application/json"
-							},
-							{
-								"key": "Cookie",
-								"value": "memberId={{MEMBER_USER_ID}}"
-							}
-						],
-						"body": {
-							"mode": "formdata",
-							"formdata": [
-								{
-									"key": "file",
-									"value": "",
-									"sessionValue": null,
-									"type": "file"
-								},
-								{
-									"key": "fileName",
-									"value": "",
-									"sessionValue": null,
-									"type": "text"
-								},
-								{
-									"key": "memberId",
-									"value": "",
-									"sessionValue": null,
-									"type": "text"
-								}
-							]
-						},
-						"url": {
-							"raw": "{{URL}}/challenges/:challengeId/submissions/:submissionId",
-							"host": [
-								"{{URL}}"
-							],
-							"path": [
-								"challenges",
-								":challengeId",
-								"submissions",
-								":submissionId"
-							],
-							"variable": [
-								{
-									"key": "challengeId",
-									"value": "{{CHANLLEGE_ID}}"
-								},
-								{
-									"key": "submissionId",
-									"value": "{{SUBMISSION_ID}}"
-								}
-							]
-						},
-						"description": "Downloads a submission to the challenge"
-					},
-					"response": []
-				}
-			],
-			"event": [
-				{
-					"listen": "prerequest",
-					"script": {
-						"id": "fbc673eb-3306-4b3f-8839-c648ab2a26ee",
-						"type": "text/javascript",
-						"exec": [
-							""
-						]
-					}
-				},
-				{
-					"listen": "test",
-					"script": {
-						"id": "a3719b27-1881-46c5-9cb9-604ed78619c8",
-						"type": "text/javascript",
-						"exec": [
-							""
-						]
-					}
 				}
 			]
 		},
@@ -1799,10 +415,9 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "c2fa7be2-5fb5-402c-8a6f-a619c0102af7",
+								"id": "5a092a9a-85ac-46ec-bdd6-02d582ccbe05",
 								"type": "text/javascript",
 								"exec": [
-									"pm.environment.set(\"OPERATOR_USER_EMAIL\", pm.response.json().memberEmail);",
 									"pm.environment.set(\"OPERATOR_USER_ID\", pm.response.json().memberId);",
 									""
 								]
@@ -1835,17 +450,14 @@
 					"response": []
 				},
 				{
-					"name": "Create User （\bmanager）",
+					"name": "Create User (\bmanager)",
 					"event": [
 						{
 							"listen": "test",
 							"script": {
-								"id": "6d5ac496-0429-4867-b932-4d2ff424eb60",
+								"id": "1d1de22d-23ed-4bb4-9e4e-3c2821bd520c",
 								"type": "text/javascript",
 								"exec": [
-									"pm.environment.set(\"OPERATOR_USER_EMAIL\", pm.response.json().memberEmail);",
-									"pm.environment.set(\"OPERATOR_USER_ID\", pm.response.json().memberId);",
-									"pm.environment.set(\"MANAGER_USER_EMAIL\", pm.response.json().memberEmail);",
 									"pm.environment.set(\"MANAGER_USER_ID\", pm.response.json().memberId);"
 								]
 							}
@@ -1877,17 +489,92 @@
 					"response": []
 				},
 				{
+					"name": "Create User (client)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "b04f7d1a-9457-438e-9d62-0849f291d999",
+								"type": "text/javascript",
+								"exec": [
+									"pm.environment.set(\"CLIENT_USER_ID\", pm.response.json().memberId);"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"memberId\": \"{{$guid}}\",\n\t\"memberEmail\": \"tcdeveloper-{{$randomInt}}@126.com\",\n\t\"roles\": [\"client\"]\n}"
+						},
+						"url": {
+							"raw": "{{URL}}/users",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"users"
+							]
+						},
+						"description": "creates a user of client"
+					},
+					"response": []
+				},
+				{
+					"name": "Create User (client 2)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "ffaf6d65-1705-4d16-a9c8-1087eb88faf0",
+								"type": "text/javascript",
+								"exec": [
+									"pm.environment.set(\"CLIENT_USER_ID2\", pm.response.json().memberId);"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"memberId\": \"{{$guid}}\",\n\t\"memberEmail\": \"tcdeveloper-{{$randomInt}}@126.com\",\n\t\"roles\": [\"client\"]\n}"
+						},
+						"url": {
+							"raw": "{{URL}}/users",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"users"
+							]
+						},
+						"description": "creates a user of client"
+					},
+					"response": []
+				},
+				{
 					"name": "Create User (member)",
 					"event": [
 						{
 							"listen": "test",
 							"script": {
-								"id": "b5e6319e-9eff-455c-bfa5-0e6bea3f2561",
+								"id": "b89d6c34-f899-404f-a03e-6f2e607b9e7b",
 								"type": "text/javascript",
 								"exec": [
-									"pm.environment.set(\"OPERATOR_USER_EMAIL\", pm.response.json().memberEmail);",
-									"pm.environment.set(\"OPERATOR_USER_ID\", pm.response.json().memberId);",
-									"pm.environment.set(\"MEMBER_USER_EMAIL\", pm.response.json().memberEmail);",
 									"pm.environment.set(\"MEMBER_USER_ID\", pm.response.json().memberId);",
 									""
 								]
@@ -1925,10 +612,9 @@
 						{
 							"listen": "test",
 							"script": {
-								"id": "009ab3c6-6d78-4d74-ba49-f1b32ba8a293",
+								"id": "b7d971e6-c234-4c10-a6fb-e8593fe66035",
 								"type": "text/javascript",
 								"exec": [
-									"",
 									"pm.environment.set(\"MEMBER_USER_ID2\", pm.response.json().memberId);",
 									""
 								]
@@ -1957,6 +643,46 @@
 							]
 						},
 						"description": "creates a member role user"
+					},
+					"response": []
+				},
+				{
+					"name": "Create User (reviewer)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "f4412807-68d9-43e7-9e6c-a628ada11f83",
+								"type": "text/javascript",
+								"exec": [
+									"pm.environment.set(\"REVIEWER_USER_ID\", pm.response.json().memberId);",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"memberId\": \"{{$guid}}\",\n\t\"memberEmail\": \"tcdeveloper-{{$randomInt}}@126.com\",\n\t\"roles\": [\"reviewer\"]\n}"
+						},
+						"url": {
+							"raw": "{{URL}}/users",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"users"
+							]
+						},
+						"description": "creates a reviewer role user"
 					},
 					"response": []
 				},
@@ -2039,7 +765,7 @@
 					"response": []
 				},
 				{
-					"name": "List Users (TEST ONLY)",
+					"name": "List Users",
 					"event": [
 						{
 							"listen": "test",
@@ -2098,6 +824,3283 @@
 							""
 						]
 					}
+				}
+			]
+		},
+		{
+			"name": "Projects",
+			"item": [
+				{
+					"name": "Failures",
+					"item": [
+						{
+							"name": "Create Project (MISSING FIELDS)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "1c088d85-de8c-4ad5-9d75-960ac9d296ea",
+										"type": "text/javascript",
+										"exec": [
+											""
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{MANAGER_TOKEN}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"projectId\": \"{{$guid}}\",\n\t\"name\": \"my project\",\n\t\"description\": \"this is my project\",\n\t\"clientId\": \"{{CLIENT_USER_ID}}\"\n}"
+								},
+								"url": {
+									"raw": "{{URL}}/projects",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"projects"
+									]
+								},
+								"description": "creates a project"
+							},
+							"response": []
+						},
+						{
+							"name": "Create Project (Invalid Role)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "1c088d85-de8c-4ad5-9d75-960ac9d296ea",
+										"type": "text/javascript",
+										"exec": [
+											""
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{REVIEWER_TOKEN}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"projectId\": \"{{$guid}}\",\n\t\"name\": \"my project\",\n\t\"description\": \"this is my project\",\n\t\"budget\": 12345,\n\t\"clientId\": \"{{CLIENT_USER_ID}}\"\n}"
+								},
+								"url": {
+									"raw": "{{URL}}/projects",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"projects"
+									]
+								},
+								"description": "creates a project"
+							},
+							"response": []
+						},
+						{
+							"name": "List Projects - topcoder-review channel (invalid role)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "6d773618-10db-4adc-82de-082ffe40f379",
+										"type": "text/javascript",
+										"exec": [
+											""
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{CLIENT_TOKEN}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{URL}}/projects?channel=topcoder-review",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"projects"
+									],
+									"query": [
+										{
+											"key": "channel",
+											"value": "topcoder-review"
+										}
+									]
+								},
+								"description": "Lists the projects"
+							},
+							"response": []
+						},
+						{
+							"name": "List Projects - topcoder-client channel (invalid role)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "6d773618-10db-4adc-82de-082ffe40f379",
+										"type": "text/javascript",
+										"exec": [
+											""
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{REVIEWER_TOKEN}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{URL}}/projects?channel=topcoder-review",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"projects"
+									],
+									"query": [
+										{
+											"key": "channel",
+											"value": "topcoder-review"
+										}
+									]
+								},
+								"description": "Lists the projects"
+							},
+							"response": []
+						},
+						{
+							"name": "Update Project (invalid role)",
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{CLIENT_TOKEN}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"projectId\": \"{{PROJECT_ID}}\",\n\t\"name\": \"my project (modified 2)\"\n}"
+								},
+								"url": {
+									"raw": "{{URL}}/projects/:projectId",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"projects",
+										":projectId"
+									],
+									"variable": [
+										{
+											"key": "projectId",
+											"value": "{{PROJECT_ID}}"
+										}
+									]
+								},
+								"description": "updates a project"
+							},
+							"response": []
+						},
+						{
+							"name": "Get Project - (invalid role)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "6d773618-10db-4adc-82de-082ffe40f379",
+										"type": "text/javascript",
+										"exec": [
+											""
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{CLIENT_TOKEN}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{URL}}/projects/:projectId?channel=topcoder-review",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"projects",
+										":projectId"
+									],
+									"query": [
+										{
+											"key": "channel",
+											"value": "topcoder-review"
+										}
+									],
+									"variable": [
+										{
+											"key": "projectId",
+											"value": "{{PROJECT_ID}}"
+										}
+									]
+								},
+								"description": "Gets a project."
+							},
+							"response": []
+						},
+						{
+							"name": "Get Project (not exists))",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "6d773618-10db-4adc-82de-082ffe40f379",
+										"type": "text/javascript",
+										"exec": [
+											""
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{MANAGER_TOKEN}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{URL}}/projects/:projectId",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"projects",
+										":projectId"
+									],
+									"variable": [
+										{
+											"key": "projectId",
+											"value": "123"
+										}
+									]
+								},
+								"description": "Gets a project."
+							},
+							"response": []
+						}
+					],
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "List Projects ",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "6d773618-10db-4adc-82de-082ffe40f379",
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{MANAGER_TOKEN}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{URL}}/projects",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"projects"
+							]
+						},
+						"description": "Lists the projects"
+					},
+					"response": []
+				},
+				{
+					"name": "List Projects - topcoder-client channel",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "6d773618-10db-4adc-82de-082ffe40f379",
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{MANAGER_TOKEN}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{URL}}/projects?channel=topcoder-client",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"projects"
+							],
+							"query": [
+								{
+									"key": "channel",
+									"value": "topcoder-client"
+								}
+							]
+						},
+						"description": "Lists the projects"
+					},
+					"response": []
+				},
+				{
+					"name": "List Projects - topcoder-review channel",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "6d773618-10db-4adc-82de-082ffe40f379",
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{MANAGER_TOKEN}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{URL}}/projects?channel=topcoder-review",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"projects"
+							],
+							"query": [
+								{
+									"key": "channel",
+									"value": "topcoder-review"
+								}
+							]
+						},
+						"description": "Lists the projects"
+					},
+					"response": []
+				},
+				{
+					"name": "Create Project",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "4d88dad9-2a2a-4eb3-9c2a-c42d9b494f9c",
+								"type": "text/javascript",
+								"exec": [
+									"pm.environment.set(\"PROJECT_ID\", pm.response.json().projectId);",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{MANAGER_TOKEN}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"projectId\": \"{{$guid}}\",\n\t\"clientId\": \"{{CLIENT_USER_ID}}\",\n\t\"name\": \"my project\",\n\t\"description\": \"this is my project\",\n\t\"budget\": 12345\n}"
+						},
+						"url": {
+							"raw": "{{URL}}/projects",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"projects"
+							]
+						},
+						"description": "creates a project"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Project",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{MANAGER_TOKEN}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"projectId\": \"{{PROJECT_ID}}\",\n\t\"name\": \"my project (modified 2)\"\n}"
+						},
+						"url": {
+							"raw": "{{URL}}/projects/:projectId",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"projects",
+								":projectId"
+							],
+							"variable": [
+								{
+									"key": "projectId",
+									"value": "{{PROJECT_ID}}"
+								}
+							]
+						},
+						"description": "creates a project"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Project (update to active)",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{MANAGER_TOKEN}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"projectId\": \"{{PROJECT_ID}}\",\n\t\"status\": \"active\"\n}"
+						},
+						"url": {
+							"raw": "{{URL}}/projects/:projectId",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"projects",
+								":projectId"
+							],
+							"variable": [
+								{
+									"key": "projectId",
+									"value": "{{PROJECT_ID}}"
+								}
+							]
+						},
+						"description": "creates a project"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Project (set copilot)",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{MANAGER_TOKEN}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"projectId\": \"{{PROJECT_ID}}\",\n\t\"copilotId\": \"{{COPILOT_USER_ID}}\"\n}"
+						},
+						"url": {
+							"raw": "{{URL}}/projects/:projectId",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"projects",
+								":projectId"
+							],
+							"variable": [
+								{
+									"key": "projectId",
+									"value": "{{PROJECT_ID}}"
+								}
+							]
+						},
+						"description": "creates a project"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Project",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "6d773618-10db-4adc-82de-082ffe40f379",
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{MANAGER_TOKEN}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{URL}}/projects/:projectId",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"projects",
+								":projectId"
+							],
+							"variable": [
+								{
+									"key": "projectId",
+									"value": "{{PROJECT_ID}}"
+								}
+							]
+						},
+						"description": "Gets a project."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Project - topcoder-client channel",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "6d773618-10db-4adc-82de-082ffe40f379",
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{MANAGER_TOKEN}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{URL}}/projects/:projectId?channel=topcoder-client",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"projects",
+								":projectId"
+							],
+							"query": [
+								{
+									"key": "channel",
+									"value": "topcoder-client"
+								}
+							],
+							"variable": [
+								{
+									"key": "projectId",
+									"value": "{{PROJECT_ID}}"
+								}
+							]
+						},
+						"description": "Gets a project."
+					},
+					"response": []
+				},
+				{
+					"name": "Get Project - topcoder-review channel",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "6d773618-10db-4adc-82de-082ffe40f379",
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{MANAGER_TOKEN}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{URL}}/projects/:projectId?channel=topcoder-review",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"projects",
+								":projectId"
+							],
+							"query": [
+								{
+									"key": "channel",
+									"value": "topcoder-review"
+								}
+							],
+							"variable": [
+								{
+									"key": "projectId",
+									"value": "{{PROJECT_ID}}"
+								}
+							]
+						},
+						"description": "Gets a project."
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Challenges",
+			"item": [
+				{
+					"name": "Failures",
+					"item": [
+						{
+							"name": "Create Challenge (invalid project id)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "b41dd684-0834-4e9a-8d3f-640d4e090020",
+										"type": "text/javascript",
+										"exec": [
+											""
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{MANAGER_TOKEN}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n   \"challengeId\": \"{{$guid}}\",\n   \"projectId\": \"xxx\",\n   \"name\": \"A great name\",\n   \"description\": \"A long description\",\n   \"phases\": {{PHASES}},\n\t\"prizes\": {\n\t\t\"winners\": [800, 400],\n\t\t\"reviewer\": 100,\n\t\t\"copilot\": 600\n\t}\n}"
+								},
+								"url": {
+									"raw": "{{URL}}/challenges",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"challenges"
+									]
+								},
+								"description": "creates a challenge"
+							},
+							"response": []
+						},
+						{
+							"name": "Create Challenge (missing fields)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "4ca2a0c6-a653-499c-93b9-8c44f96c5d29",
+										"type": "text/javascript",
+										"exec": [
+											""
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{MANAGER_TOKEN}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n   \"challengeId\": \"{{$guid}}\",\n   \"name\": \"A great name\",\n   \"description\": \"A long description\",\n   \"phases\": {{PHASES}},\n\t\"prizes\": {\n\t\t\"winners\": [800, 400],\n\t\t\"reviewer\": 100,\n\t\t\"copilot\": 600\n\t}\n}"
+								},
+								"url": {
+									"raw": "{{URL}}/challenges",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"challenges"
+									]
+								},
+								"description": "creates a challenge"
+							},
+							"response": []
+						},
+						{
+							"name": "Create Challenge (no auth)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "4ca2a0c6-a653-499c-93b9-8c44f96c5d29",
+										"type": "text/javascript",
+										"exec": [
+											""
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n   \"challengeId\": \"{{$guid}}\",\n   \"projectId\": \"{{PROJECT_ID}}\",\n   \"name\": \"A great name\",\n   \"description\": \"A long description\",\n   \"phases\": {{PHASES}},\n\t\"prizes\": {\n\t\t\"winners\": [800, 400],\n\t\t\"reviewer\": 100,\n\t\t\"copilot\": 600\n\t}\n}"
+								},
+								"url": {
+									"raw": "{{URL}}/challenges",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"challenges"
+									]
+								},
+								"description": "creates a challenge"
+							},
+							"response": []
+						},
+						{
+							"name": "Create Challenge (invalid role)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "4ca2a0c6-a653-499c-93b9-8c44f96c5d29",
+										"type": "text/javascript",
+										"exec": [
+											""
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{CLIENT_TOKEN}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n   \"challengeId\": \"{{$guid}}\",\n   \"projectId\": \"{{PROJECT_ID}}\",\n   \"name\": \"A great name\",\n   \"description\": \"A long description\",\n   \"phases\": {{PHASES}},\n\t\"prizes\": {\n\t\t\"winners\": [800, 400],\n\t\t\"reviewer\": 100,\n\t\t\"copilot\": 600\n\t}\n}"
+								},
+								"url": {
+									"raw": "{{URL}}/challenges",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"challenges"
+									]
+								},
+								"description": "creates a challenge"
+							},
+							"response": []
+						},
+						{
+							"name": "Update Challenge (invalid role)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "0f3f5211-4f0c-477d-998a-a048026f1a62",
+										"type": "text/javascript",
+										"exec": [
+											""
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "PUT",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{MEMBER_TOKEN}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n   \"challengeId\": \"{{CHANLLEGE_ID}}\",\n   \"name\": \"A great name modified\"\n}"
+								},
+								"url": {
+									"raw": "{{URL}}/challenges/:challengeId",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"challenges",
+										":challengeId"
+									],
+									"variable": [
+										{
+											"key": "challengeId",
+											"value": "{{CHANLLEGE_ID}}"
+										}
+									]
+								},
+								"description": "udpates a challenge"
+							},
+							"response": []
+						},
+						{
+							"name": "Get Challenge (not exists)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "0f3f5211-4f0c-477d-998a-a048026f1a62",
+										"type": "text/javascript",
+										"exec": [
+											""
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n   \"challengeId\": \"{{CHANLLEGE_ID}}\",\n   \"name\": \"A great name modified\"\n}"
+								},
+								"url": {
+									"raw": "{{URL}}/challenges/:challengeId",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"challenges",
+										":challengeId"
+									],
+									"variable": [
+										{
+											"key": "challengeId",
+											"value": "xxx"
+										}
+									]
+								},
+								"description": "Gets a challenge"
+							},
+							"response": []
+						},
+						{
+							"name": "Register Challenge (invalid role)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "c98299f8-5eb8-4380-b884-7c093f3a6a10",
+										"type": "text/javascript",
+										"exec": [
+											"",
+											""
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{MANAGER_TOKEN}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{URL}}/challenges/:challengeId/register",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"challenges",
+										":challengeId",
+										"register"
+									],
+									"variable": [
+										{
+											"key": "challengeId",
+											"value": "{{CHANLLEGE_ID}}"
+										}
+									]
+								},
+								"description": "registers a challenge"
+							},
+							"response": []
+						},
+						{
+							"name": "Un-Register Challenge (invalid role)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "c98299f8-5eb8-4380-b884-7c093f3a6a10",
+										"type": "text/javascript",
+										"exec": [
+											"",
+											""
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{MANAGER_TOKEN}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{URL}}/challenges/:challengeId/register",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"challenges",
+										":challengeId",
+										"register"
+									],
+									"variable": [
+										{
+											"key": "challengeId",
+											"value": "{{CHANLLEGE_ID}}"
+										}
+									]
+								},
+								"description": "unregisters a challenge"
+							},
+							"response": []
+						},
+						{
+							"name": "Register a reviewer to challenge (not a reviewer)",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{COPILOT_TOKEN}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{URL}}/challenges/:challengeId/reviewer/:userId",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"challenges",
+										":challengeId",
+										"reviewer",
+										":userId"
+									],
+									"variable": [
+										{
+											"key": "challengeId",
+											"value": "{{CHANLLEGE_ID}}"
+										},
+										{
+											"key": "userId",
+											"value": "{{MEMBER_USER_ID}}"
+										}
+									]
+								},
+								"description": "Will register a reviewer to a challenge. Needs manager or copilot role"
+							},
+							"response": []
+						},
+						{
+							"name": "Un-register a reviewer to a challenge (invalid role)",
+							"request": {
+								"method": "DELETE",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{REVIEWER_TOKEN}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "{{URL}}/challenges/:challengeId/reviewer/:userId",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"challenges",
+										":challengeId",
+										"reviewer",
+										":userId"
+									],
+									"variable": [
+										{
+											"key": "challengeId",
+											"value": "{{CHANLLEGE_ID}}"
+										},
+										{
+											"key": "userId",
+											"value": "{{REVIEWER_USER_ID}}"
+										}
+									]
+								},
+								"description": "Will un-register a reviewer to a challenge. Needs manager or copilot role"
+							},
+							"response": []
+						}
+					],
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "Create Challenge",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "b7855fa4-2d62-48e7-a613-3ee5d7b38bab",
+								"type": "text/javascript",
+								"exec": [
+									"pm.environment.set(\"CHANLLEGE_ID\", pm.response.json().challengeId);",
+									""
+								]
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "2d13864e-9b07-4752-a424-6441ae693adb",
+								"type": "text/javascript",
+								"exec": [
+									"const allPhasesNames = ['Register', 'Submission', 'Review', 'Appeal', 'AppealResponse'];",
+									"const durations = [48, 72, 48, 24, 12];",
+									"const phases = [];",
+									"let previousEndDate = null;",
+									"for (let i = 0; i < allPhasesNames.length; i++) {",
+									"  const name = allPhasesNames[i];",
+									"  const duration = durations[i];",
+									"  const startDate = previousEndDate || new Date();",
+									"  const endDate = new Date(startDate.getTime() + duration * 3600 * 1000);",
+									"  phases.push({",
+									"    name,",
+									"    startDate,",
+									"    endDate",
+									"  });",
+									"  previousEndDate = endDate;",
+									"}",
+									"",
+									"pm.environment.set(\"PHASES\", JSON.stringify(phases));"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{COPILOT_TOKEN}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n   \"challengeId\": \"{{$guid}}\",\n   \"projectId\": \"{{PROJECT_ID}}\",\n   \"name\": \"A great name\",\n   \"description\": \"A long description\",\n   \"phases\": {{PHASES}},\n\t\"prizes\": {\n\t\t\"winners\": [800, 400],\n\t\t\"reviewer\": 100,\n\t\t\"copilot\": 600\n\t}\n}"
+						},
+						"url": {
+							"raw": "{{URL}}/challenges",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"challenges"
+							]
+						},
+						"description": "creates a project"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Challenge",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "0f3f5211-4f0c-477d-998a-a048026f1a62",
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "a3bcd96d-4ab0-4ead-a28f-8b4eea332dab",
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{MANAGER_TOKEN}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n   \"challengeId\": \"{{CHANLLEGE_ID}}\",\n   \"name\": \"A great name modified\"\n}"
+						},
+						"url": {
+							"raw": "{{URL}}/challenges/:challengeId",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"challenges",
+								":challengeId"
+							],
+							"variable": [
+								{
+									"key": "challengeId",
+									"value": "{{CHANLLEGE_ID}}"
+								}
+							]
+						},
+						"description": "udpates a challenge"
+					},
+					"response": []
+				},
+				{
+					"name": "Update Challenge (update phase)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "0f3f5211-4f0c-477d-998a-a048026f1a62",
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"id": "8ca9121f-05cb-442d-be45-bea6baddb535",
+								"type": "text/javascript",
+								"exec": [
+									"const allPhasesNames = ['Register', 'Submission', 'Review', 'Appeal', 'AppealResponse'];",
+									"const preferCurrentPhase = 'AppealResponse';",
+									"",
+									"const durations = [48, 72, 48, 24, 12];",
+									"const phases = [];",
+									"",
+									"let currentPhaseIndex = 0;",
+									"let totalDuration = 0;",
+									"for (let i = 0; i < allPhasesNames.length; i++) {",
+									"    if (allPhasesNames[i] === preferCurrentPhase) {",
+									"        currentPhaseIndex = i;",
+									"        break;",
+									"    } else {",
+									"        totalDuration += durations[i];",
+									"    }",
+									"}",
+									"let previousEndDate = null;",
+									"for (let i = 0; i < allPhasesNames.length; i++) {",
+									"  const name = allPhasesNames[i];",
+									"  const duration = durations[i];",
+									"  const startDate = previousEndDate || new Date(new Date().getTime() - totalDuration * 3600 * 1000);",
+									"  const endDate = new Date(startDate.getTime() + duration * 3600 * 1000);",
+									"  phases.push({",
+									"    name,",
+									"    startDate,",
+									"    endDate",
+									"  });",
+									"  previousEndDate = endDate;",
+									"}",
+									"",
+									"pm.environment.set(\"PHASES\", JSON.stringify(phases));"
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{COPILOT_TOKEN}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n   \"challengeId\": \"{{CHANLLEGE_ID}}\",\n   \"phases\": {{PHASES}}\n}"
+						},
+						"url": {
+							"raw": "{{URL}}/challenges/:challengeId",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"challenges",
+								":challengeId"
+							],
+							"variable": [
+								{
+									"key": "challengeId",
+									"value": "{{CHANLLEGE_ID}}"
+								}
+							]
+						},
+						"description": "udpates a challenge"
+					},
+					"response": []
+				},
+				{
+					"name": "Get Challenge",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "0f3f5211-4f0c-477d-998a-a048026f1a62",
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n   \"challengeId\": \"{{CHANLLEGE_ID}}\",\n   \"name\": \"A great name modified\"\n}"
+						},
+						"url": {
+							"raw": "{{URL}}/challenges/:challengeId",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"challenges",
+								":challengeId"
+							],
+							"variable": [
+								{
+									"key": "challengeId",
+									"value": "{{CHANLLEGE_ID}}"
+								}
+							]
+						},
+						"description": "Gets a challenge"
+					},
+					"response": []
+				},
+				{
+					"name": "List Challenge",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "0f3f5211-4f0c-477d-998a-a048026f1a62",
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n   \"challengeId\": \"{{CHANLLEGE_ID}}\",\n   \"name\": \"A great name modified\"\n}"
+						},
+						"url": {
+							"raw": "{{URL}}/challenges",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"challenges"
+							]
+						},
+						"description": "Lists all challenges"
+					},
+					"response": []
+				},
+				{
+					"name": "Register Challenge",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "c98299f8-5eb8-4380-b884-7c093f3a6a10",
+								"type": "text/javascript",
+								"exec": [
+									"",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{MEMBER_TOKEN}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{URL}}/challenges/:challengeId/register",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"challenges",
+								":challengeId",
+								"register"
+							],
+							"variable": [
+								{
+									"key": "challengeId",
+									"value": "{{CHANLLEGE_ID}}"
+								}
+							]
+						},
+						"description": "registers a challenge"
+					},
+					"response": []
+				},
+				{
+					"name": "Un-Register Challenge",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "c98299f8-5eb8-4380-b884-7c093f3a6a10",
+								"type": "text/javascript",
+								"exec": [
+									"",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{MEMBER_TOKEN}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{URL}}/challenges/:challengeId/register",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"challenges",
+								":challengeId",
+								"register"
+							],
+							"variable": [
+								{
+									"key": "challengeId",
+									"value": "{{CHANLLEGE_ID}}"
+								}
+							]
+						},
+						"description": "unregisters a challenge"
+					},
+					"response": []
+				},
+				{
+					"name": "Register a reviewer to challenge",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{COPILOT_TOKEN}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{URL}}/challenges/:challengeId/reviewer/:userId",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"challenges",
+								":challengeId",
+								"reviewer",
+								":userId"
+							],
+							"variable": [
+								{
+									"key": "challengeId",
+									"value": "{{CHANLLEGE_ID}}"
+								},
+								{
+									"key": "userId",
+									"value": "{{REVIEWER_USER_ID}}"
+								}
+							]
+						},
+						"description": "Will register a reviewer to a challenge. Needs manager or copilot role"
+					},
+					"response": []
+				},
+				{
+					"name": "Un-register a reviewer to a challenge",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{COPILOT_TOKEN}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{URL}}/challenges/:challengeId/reviewer/:userId",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"challenges",
+								":challengeId",
+								"reviewer",
+								":userId"
+							],
+							"variable": [
+								{
+									"key": "challengeId",
+									"value": "{{CHANLLEGE_ID}}"
+								},
+								{
+									"key": "userId",
+									"value": "{{REVIEWER_USER_ID}}"
+								}
+							]
+						},
+						"description": "Will un-register a reviewer to a challenge. Needs manager or copilot role"
+					},
+					"response": []
+				}
+			],
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "fbc673eb-3306-4b3f-8839-c648ab2a26ee",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "a3719b27-1881-46c5-9cb9-604ed78619c8",
+						"type": "text/javascript",
+						"exec": [
+							""
+						]
+					}
+				}
+			]
+		},
+		{
+			"name": "Challenge Submission",
+			"item": [
+				{
+					"name": "Failures",
+					"item": [
+						{
+							"name": "Upload Submission (invalid roles)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "01ea60bd-c50e-47b1-a143-0e9a02c4c661",
+										"type": "text/javascript",
+										"exec": [
+											"",
+											""
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{CLIENT_TOKEN}}"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "file",
+											"type": "file"
+										},
+										{
+											"key": "memberId",
+											"value": "{{CLIENT_USER_ID}}",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{URL}}/challenges/:challengeId/submissions",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"challenges",
+										":challengeId",
+										"submissions"
+									],
+									"variable": [
+										{
+											"key": "challengeId",
+											"value": "{{CHANLLEGE_ID}}"
+										}
+									]
+								},
+								"description": "Uploads a submission to the challenge"
+							},
+							"response": []
+						},
+						{
+							"name": "Upload Submission (not register member)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "01ea60bd-c50e-47b1-a143-0e9a02c4c661",
+										"type": "text/javascript",
+										"exec": [
+											"",
+											""
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{MEMBER_TOKEN2}}"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "file",
+											"type": "file"
+										},
+										{
+											"key": "memberId",
+											"value": "{{MEMBER_USER_ID2}}",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{URL}}/challenges/:challengeId/submissions",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"challenges",
+										":challengeId",
+										"submissions"
+									],
+									"variable": [
+										{
+											"key": "challengeId",
+											"value": "{{CHANLLEGE_ID}}"
+										}
+									]
+								},
+								"description": "Uploads a submission to the challenge"
+							},
+							"response": []
+						},
+						{
+							"name": "Upload Submission (missing fields)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "01ea60bd-c50e-47b1-a143-0e9a02c4c661",
+										"type": "text/javascript",
+										"exec": [
+											"",
+											""
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{MEMBER_TOKEN}}"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "file",
+											"type": "file"
+										},
+										{
+											"key": "memberId",
+											"value": "{{MEMBER_USER_ID}}",
+											"type": "text",
+											"disabled": true
+										}
+									]
+								},
+								"url": {
+									"raw": "{{URL}}/challenges/:challengeId/submissions",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"challenges",
+										":challengeId",
+										"submissions"
+									],
+									"variable": [
+										{
+											"key": "challengeId",
+											"value": "{{CHANLLEGE_ID}}"
+										}
+									]
+								},
+								"description": "Uploads a submission to the challenge"
+							},
+							"response": []
+						},
+						{
+							"name": "Download Submission (no auth)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "ce7bd2a1-ba3c-4d73-95fd-601cf05725ff",
+										"type": "text/javascript",
+										"exec": [
+											""
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{MEMBER_TOKEN}}",
+										"disabled": true
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "file",
+											"value": "",
+											"type": "file"
+										},
+										{
+											"key": "fileName",
+											"value": "",
+											"type": "text"
+										},
+										{
+											"key": "memberId",
+											"value": "",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{URL}}/challenges/:challengeId/submissions/:submissionId",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"challenges",
+										":challengeId",
+										"submissions",
+										":submissionId"
+									],
+									"variable": [
+										{
+											"key": "challengeId",
+											"value": "{{CHANLLEGE_ID}}"
+										},
+										{
+											"key": "submissionId",
+											"value": "{{SUBMISSION_ID}}"
+										}
+									]
+								},
+								"description": "Downloads a submission to the challenge"
+							},
+							"response": []
+						},
+						{
+							"name": "Download Submission (invalid submissino id)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "ce7bd2a1-ba3c-4d73-95fd-601cf05725ff",
+										"type": "text/javascript",
+										"exec": [
+											""
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{MEMBER_TOKEN}}"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "file",
+											"value": "",
+											"type": "file"
+										},
+										{
+											"key": "fileName",
+											"value": "",
+											"type": "text"
+										},
+										{
+											"key": "memberId",
+											"value": "",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{URL}}/challenges/:challengeId/submissions/:submissionId",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"challenges",
+										":challengeId",
+										"submissions",
+										":submissionId"
+									],
+									"variable": [
+										{
+											"key": "challengeId",
+											"value": "{{CHANLLEGE_ID}}"
+										},
+										{
+											"key": "submissionId",
+											"value": "xxx"
+										}
+									]
+								},
+								"description": "Downloads a submission to the challenge"
+							},
+							"response": []
+						},
+						{
+							"name": "Download Submission (invalid challenge id)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "ce7bd2a1-ba3c-4d73-95fd-601cf05725ff",
+										"type": "text/javascript",
+										"exec": [
+											""
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{MEMBER_TOKEN}}"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "file",
+											"value": "",
+											"type": "file"
+										},
+										{
+											"key": "fileName",
+											"value": "",
+											"type": "text"
+										},
+										{
+											"key": "memberId",
+											"value": "",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{URL}}/challenges/:challengeId/submissions/:submissionId",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"challenges",
+										":challengeId",
+										"submissions",
+										":submissionId"
+									],
+									"variable": [
+										{
+											"key": "challengeId",
+											"value": "xxxx"
+										},
+										{
+											"key": "submissionId",
+											"value": "{{SUBMISSION_ID}}"
+										}
+									]
+								},
+								"description": "Downloads a submission to the challenge"
+							},
+							"response": []
+						},
+						{
+							"name": "Download Submission (not copilot of the project)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "ce7bd2a1-ba3c-4d73-95fd-601cf05725ff",
+										"type": "text/javascript",
+										"exec": [
+											""
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{COPILOT_TOKEN2}}"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "file",
+											"value": "",
+											"type": "file"
+										},
+										{
+											"key": "fileName",
+											"value": "",
+											"type": "text"
+										},
+										{
+											"key": "memberId",
+											"value": "",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{URL}}/challenges/:challengeId/submissions/:submissionId",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"challenges",
+										":challengeId",
+										"submissions",
+										":submissionId"
+									],
+									"variable": [
+										{
+											"key": "challengeId",
+											"value": "{{CHANLLEGE_ID}}"
+										},
+										{
+											"key": "submissionId",
+											"value": "{{SUBMISSION_ID}}"
+										}
+									]
+								},
+								"description": "Downloads a submission to the challenge"
+							},
+							"response": []
+						},
+						{
+							"name": "Download Submission (not registered member)",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"id": "ce7bd2a1-ba3c-4d73-95fd-601cf05725ff",
+										"type": "text/javascript",
+										"exec": [
+											""
+										]
+									}
+								}
+							],
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{MEMBER_TOKEN2}}"
+									}
+								],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "file",
+											"value": "",
+											"type": "file"
+										},
+										{
+											"key": "fileName",
+											"value": "",
+											"type": "text"
+										},
+										{
+											"key": "memberId",
+											"value": "",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "{{URL}}/challenges/:challengeId/submissions/:submissionId",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"challenges",
+										":challengeId",
+										"submissions",
+										":submissionId"
+									],
+									"variable": [
+										{
+											"key": "challengeId",
+											"value": "{{CHANLLEGE_ID}}"
+										},
+										{
+											"key": "submissionId",
+											"value": "{{SUBMISSION_ID}}"
+										}
+									]
+								},
+								"description": "Downloads a submission to the challenge"
+							},
+							"response": []
+						}
+					],
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "Upload Submission",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "d066daf3-d611-413b-a489-035dacc1965e",
+								"type": "text/javascript",
+								"exec": [
+									"pm.environment.set(\"SUBMISSION_ID\", pm.response.json().submissionId);",
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{MEMBER_TOKEN}}"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"type": "file"
+								},
+								{
+									"key": "memberId",
+									"value": "{{MEMBER_USER_ID}}",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{URL}}/challenges/:challengeId/submissions",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"challenges",
+								":challengeId",
+								"submissions"
+							],
+							"variable": [
+								{
+									"key": "challengeId",
+									"value": "{{CHANLLEGE_ID}}"
+								}
+							]
+						},
+						"description": "Uploads a submission to the challenge"
+					},
+					"response": []
+				},
+				{
+					"name": "Download Submission",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "ce7bd2a1-ba3c-4d73-95fd-601cf05725ff",
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{MEMBER_TOKEN}}"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"value": "",
+									"type": "file"
+								},
+								{
+									"key": "fileName",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "memberId",
+									"value": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{URL}}/challenges/:challengeId/submissions/:submissionId",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"challenges",
+								":challengeId",
+								"submissions",
+								":submissionId"
+							],
+							"variable": [
+								{
+									"key": "challengeId",
+									"value": "{{CHANLLEGE_ID}}"
+								},
+								{
+									"key": "submissionId",
+									"value": "{{SUBMISSION_ID}}"
+								}
+							]
+						},
+						"description": "Downloads a submission to the challenge"
+					},
+					"response": []
+				},
+				{
+					"name": "Download Submission (by copilot)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "ce7bd2a1-ba3c-4d73-95fd-601cf05725ff",
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{COPILOT_TOKEN}}"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"value": "",
+									"type": "file"
+								},
+								{
+									"key": "fileName",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "memberId",
+									"value": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{URL}}/challenges/:challengeId/submissions/:submissionId",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"challenges",
+								":challengeId",
+								"submissions",
+								":submissionId"
+							],
+							"variable": [
+								{
+									"key": "challengeId",
+									"value": "{{CHANLLEGE_ID}}"
+								},
+								{
+									"key": "submissionId",
+									"value": "{{SUBMISSION_ID}}"
+								}
+							]
+						},
+						"description": "Downloads a submission to the challenge"
+					},
+					"response": []
+				},
+				{
+					"name": "Download Submission (by manager)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "ce7bd2a1-ba3c-4d73-95fd-601cf05725ff",
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{MANAGER_TOKEN}}"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"value": "",
+									"type": "file"
+								},
+								{
+									"key": "fileName",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "memberId",
+									"value": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{URL}}/challenges/:challengeId/submissions/:submissionId",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"challenges",
+								":challengeId",
+								"submissions",
+								":submissionId"
+							],
+							"variable": [
+								{
+									"key": "challengeId",
+									"value": "{{CHANLLEGE_ID}}"
+								},
+								{
+									"key": "submissionId",
+									"value": "{{SUBMISSION_ID}}"
+								}
+							]
+						},
+						"description": "Downloads a submission to the challenge"
+					},
+					"response": []
+				},
+				{
+					"name": "Download Winning Submission (by client)",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "ce7bd2a1-ba3c-4d73-95fd-601cf05725ff",
+								"type": "text/javascript",
+								"exec": [
+									""
+								]
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{CLIENT_TOKEN}}"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"value": "",
+									"type": "file"
+								},
+								{
+									"key": "fileName",
+									"value": "",
+									"type": "text"
+								},
+								{
+									"key": "memberId",
+									"value": "",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{URL}}/challenges/:challengeId/winning-submission",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"challenges",
+								":challengeId",
+								"winning-submission"
+							],
+							"variable": [
+								{
+									"key": "challengeId",
+									"value": "{{CHANLLEGE_ID}}"
+								}
+							]
+						},
+						"description": "Downloads a submission to the challenge"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Challenge Review",
+			"item": [
+				{
+					"name": "Failures",
+					"item": [
+						{
+							"name": "Create a challenge scorecard (invalid scorecard)",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{MANAGER_TOKEN}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"name\": \"My scorecard\",\n\t\"questions\": [\n\t\t{\n\t\t\t\"text\": \"1st question\"\n\t\t},\n\t\t{\n\t\t\t\"text\": \"2st question\",\n\t\t\t\"weight\": 40,\n\t\t\t\"order\": 1\n\t\t}\n\t]\n}"
+								},
+								"url": {
+									"raw": "{{URL}}/challenges/:challengeId/scorecard",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"challenges",
+										":challengeId",
+										"scorecard"
+									],
+									"variable": [
+										{
+											"key": "challengeId",
+											"value": "{{CHANLLEGE_ID}}"
+										}
+									]
+								},
+								"description": "Will create a challenge scorecard. Needs manager or copilot role"
+							},
+							"response": []
+						},
+						{
+							"name": "Create a challenge scorecard (invalid role)",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{MEMBER_TOKEN}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"name\": \"My scorecard\",\n\t\"questions\": [\n\t\t{\n\t\t\t\"text\": \"1st question\",\n\t\t\t\"weight\": 60,\n\t\t\t\"order\": 0\n\t\t},\n\t\t{\n\t\t\t\"text\": \"2st question\",\n\t\t\t\"weight\": 40,\n\t\t\t\"order\": 1\n\t\t}\n\t]\n}"
+								},
+								"url": {
+									"raw": "{{URL}}/challenges/:challengeId/scorecard",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"challenges",
+										":challengeId",
+										"scorecard"
+									],
+									"variable": [
+										{
+											"key": "challengeId",
+											"value": "{{CHANLLEGE_ID}}"
+										}
+									]
+								},
+								"description": "Will create a challenge scorecard. Needs manager or copilot role"
+							},
+							"response": []
+						},
+						{
+							"name": "Create a challenge review (invalid review)",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{REVIEWER_TOKEN}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"reviewerId\": \"{{REVIEWER_USER_ID}}\",\n\t\"memberId\": \"{{MEMBER_USER_ID}}\",\n\t\"review\": [\n\t\t{\n\t\t\t\"question\": 0\n\t\t}\n    ]\n}"
+								},
+								"url": {
+									"raw": "{{URL}}/challenges/:challengeId/review",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"challenges",
+										":challengeId",
+										"review"
+									],
+									"variable": [
+										{
+											"key": "challengeId",
+											"value": "{{CHANLLEGE_ID}}"
+										}
+									]
+								},
+								"description": "Will create a challenge review. Needs reviewer, copilot or manager role. If reviewer role, reviewerId must match the id derived from authorization header and be part of challenge. A member with memberId must have a submission"
+							},
+							"response": []
+						},
+						{
+							"name": "Create a challenge review (invalid role)",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{MEMBER_TOKEN}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"reviewerId\": \"{{REVIEWER_USER_ID}}\",\n\t\"memberId\": \"{{MEMBER_USER_ID}}\",\n\t\"review\": [\n\t\t{\n\t\t\t\"question\": 0,\n\t\t\t\"score\": 5,\n\t\t\t\"comments\": \"some issues\"\n\t\t}\n    ]\n}"
+								},
+								"url": {
+									"raw": "{{URL}}/challenges/:challengeId/review",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"challenges",
+										":challengeId",
+										"review"
+									],
+									"variable": [
+										{
+											"key": "challengeId",
+											"value": "{{CHANLLEGE_ID}}"
+										}
+									]
+								},
+								"description": "Will create a challenge review. Needs reviewer, copilot or manager role. If reviewer role, reviewerId must match the id derived from authorization header and be part of challenge. A member with memberId must have a submission"
+							},
+							"response": []
+						},
+						{
+							"name": "Create a challenge appeal (invalid appeal)",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{MEMBER_TOKEN}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"reviewerId\": \"{{REVIEWER_USER_ID}}\",\n\t\"memberId\": \"{{MEMBER_USER_ID}}\",\n\t\"appeal\": {\n\t\t\t\"question\": 0\n\t}\n    \n}"
+								},
+								"url": {
+									"raw": "{{URL}}/challenges/:challengeId/appeals",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"challenges",
+										":challengeId",
+										"appeals"
+									],
+									"variable": [
+										{
+											"key": "challengeId",
+											"value": "{{CHANLLEGE_ID}}"
+										}
+									]
+								},
+								"description": "Will create a challenge review. Needs reviewer, copilot or manager role. If reviewer role, reviewerId must match the id derived from authorization header and be part of challenge. A member with memberId must have a submission"
+							},
+							"response": []
+						},
+						{
+							"name": "Create a challenge appeal (invalid role)",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{REVIEWER_TOKEN}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"reviewerId\": \"{{REVIEWER_USER_ID}}\",\n\t\"memberId\": \"{{MEMBER_USER_ID}}\",\n\t\"appeal\": {\n\t\t\t\"text\": \"this is my appeal\",\n\t\t\t\"question\": 0\n\t}\n    \n}"
+								},
+								"url": {
+									"raw": "{{URL}}/challenges/:challengeId/appeals",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"challenges",
+										":challengeId",
+										"appeals"
+									],
+									"variable": [
+										{
+											"key": "challengeId",
+											"value": "{{CHANLLEGE_ID}}"
+										}
+									]
+								},
+								"description": "Will create a challenge review. Needs reviewer, copilot or manager role. If reviewer role, reviewerId must match the id derived from authorization header and be part of challenge. A member with memberId must have a submission"
+							},
+							"response": []
+						},
+						{
+							"name": "Create a challenge appeal response (invalid response)",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{REVIEWER_TOKEN}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"reviewerId\": \"{{REVIEWER_USER_ID}}\",\n\t\"memberId\": \"{{MEMBER_USER_ID}}\",\n\t\"appealResponse\": {\n\t\t\t\"text\": \"this is my appeal response\"\n\t}\n    \n}"
+								},
+								"url": {
+									"raw": "{{URL}}/challenges/:challengeId/appealResponse",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"challenges",
+										":challengeId",
+										"appealResponse"
+									],
+									"variable": [
+										{
+											"key": "challengeId",
+											"value": "{{CHANLLEGE_ID}}"
+										}
+									]
+								},
+								"description": "Will update a challenge review (Appeals response). Needs reviewer, copilot or manager role. If reviewer role, reviewerId must match the id derived from authorization header and belong to challenge. A review with reviewerId and memberId must exist."
+							},
+							"response": []
+						},
+						{
+							"name": "Create a challenge appeal response (invalid role)",
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json"
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "Authorization",
+										"value": "Bearer {{MEMBER_TOKEN}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"reviewerId\": \"{{REVIEWER_USER_ID}}\",\n\t\"memberId\": \"{{MEMBER_USER_ID}}\",\n\t\"appealResponse\": {\n\t\t\t\"text\": \"this is my appeal response\",\n\t\t\t\"question\": 0,\n\t\t\t\"finalScore\": 9\n\t}\n    \n}"
+								},
+								"url": {
+									"raw": "{{URL}}/challenges/:challengeId/appealResponse",
+									"host": [
+										"{{URL}}"
+									],
+									"path": [
+										"challenges",
+										":challengeId",
+										"appealResponse"
+									],
+									"variable": [
+										{
+											"key": "challengeId",
+											"value": "{{CHANLLEGE_ID}}"
+										}
+									]
+								},
+								"description": "Will update a challenge review (Appeals response). Needs reviewer, copilot or manager role. If reviewer role, reviewerId must match the id derived from authorization header and belong to challenge. A review with reviewerId and memberId must exist."
+							},
+							"response": []
+						}
+					],
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "Create a challenge scorecard",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{MANAGER_TOKEN}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\": \"My scorecard\",\n\t\"questions\": [\n\t\t{\n\t\t\t\"text\": \"1st question\",\n\t\t\t\"weight\": 0.6,\n\t\t\t\"order\": 0\n\t\t},\n\t\t{\n\t\t\t\"text\": \"2st question\",\n\t\t\t\"weight\": 0.4,\n\t\t\t\"order\": 1\n\t\t}\n\t]\n}"
+						},
+						"url": {
+							"raw": "{{URL}}/challenges/:challengeId/scorecard",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"challenges",
+								":challengeId",
+								"scorecard"
+							],
+							"variable": [
+								{
+									"key": "challengeId",
+									"value": "{{CHANLLEGE_ID}}"
+								}
+							]
+						},
+						"description": "Will create a challenge scorecard. Needs manager or copilot role"
+					},
+					"response": []
+				},
+				{
+					"name": "Create a challenge scorecard (by copilot)",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{COPILOT_TOKEN}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"name\": \"My scorecard\",\n\t\"questions\": [\n\t\t{\n\t\t\t\"text\": \"1st question\",\n\t\t\t\"weight\": 60,\n\t\t\t\"order\": 0\n\t\t},\n\t\t{\n\t\t\t\"text\": \"2st question\",\n\t\t\t\"weight\": 40,\n\t\t\t\"order\": 1\n\t\t}\n\t]\n}"
+						},
+						"url": {
+							"raw": "{{URL}}/challenges/:challengeId/scorecard",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"challenges",
+								":challengeId",
+								"scorecard"
+							],
+							"variable": [
+								{
+									"key": "challengeId",
+									"value": "{{CHANLLEGE_ID}}"
+								}
+							]
+						},
+						"description": "Will create a challenge scorecard. Needs manager or copilot role"
+					},
+					"response": []
+				},
+				{
+					"name": "Create a challenge review",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{REVIEWER_TOKEN}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"reviewerId\": \"{{REVIEWER_USER_ID}}\",\n\t\"memberId\": \"{{MEMBER_USER_ID}}\",\n\t\"review\": [\n\t\t{\n\t\t\t\"question\": 0,\n\t\t\t\"score\": 80,\n\t\t\t\"comments\": \"some issues\"\n\t\t},\n\t\t{\n\t\t\t\"question\": 1,\n\t\t\t\"score\": 90,\n\t\t\t\"comments\": \"some issues\"\n\t\t}\n    ]\n}"
+						},
+						"url": {
+							"raw": "{{URL}}/challenges/:challengeId/review",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"challenges",
+								":challengeId",
+								"review"
+							],
+							"variable": [
+								{
+									"key": "challengeId",
+									"value": "{{CHANLLEGE_ID}}"
+								}
+							]
+						},
+						"description": "Will create a challenge review. Needs reviewer, copilot or manager role. If reviewer role, reviewerId must match the id derived from authorization header and be part of challenge. A member with memberId must have a submission"
+					},
+					"response": []
+				},
+				{
+					"name": "Create a challenge appeal",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{MEMBER_TOKEN}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"reviewerId\": \"{{REVIEWER_USER_ID}}\",\n\t\"memberId\": \"{{MEMBER_USER_ID}}\",\n\t\"appeal\": {\n\t\t\t\"text\": \"this is my appeal\",\n\t\t\t\"question\": 0\n\t}\n    \n}"
+						},
+						"url": {
+							"raw": "{{URL}}/challenges/:challengeId/appeals",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"challenges",
+								":challengeId",
+								"appeals"
+							],
+							"variable": [
+								{
+									"key": "challengeId",
+									"value": "{{CHANLLEGE_ID}}"
+								}
+							]
+						},
+						"description": "Will create a challenge review. Needs reviewer, copilot or manager role. If reviewer role, reviewerId must match the id derived from authorization header and be part of challenge. A member with memberId must have a submission"
+					},
+					"response": []
+				},
+				{
+					"name": "Create a challenge appeal response",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Authorization",
+								"value": "Bearer {{REVIEWER_TOKEN}}"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n\t\"reviewerId\": \"{{REVIEWER_USER_ID}}\",\n\t\"memberId\": \"{{MEMBER_USER_ID}}\",\n\t\"appealResponse\": {\n\t\t\t\"text\": \"this is my appeal response\",\n\t\t\t\"question\": 0,\n\t\t\t\"finalScore\": 90\n\t}\n    \n}"
+						},
+						"url": {
+							"raw": "{{URL}}/challenges/:challengeId/appealResponse",
+							"host": [
+								"{{URL}}"
+							],
+							"path": [
+								"challenges",
+								":challengeId",
+								"appealResponse"
+							],
+							"variable": [
+								{
+									"key": "challengeId",
+									"value": "{{CHANLLEGE_ID}}"
+								}
+							]
+						},
+						"description": "Will update a challenge review (Appeals response). Needs reviewer, copilot or manager role. If reviewer role, reviewerId must match the id derived from authorization header and belong to challenge. A review with reviewerId and memberId must exist."
+					},
+					"response": []
 				}
 			]
 		}

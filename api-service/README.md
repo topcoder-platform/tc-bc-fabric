@@ -17,7 +17,7 @@ This is the deployment guide for PoC Challenge Review Process with Blockchain - 
 
     Read the blockchain [README.md](../blockchain/README.md) to setup the fabric network.
 
-    Make sure the Fabric blockchain netowork has been setup before setting up this API.
+    Make sure the Fabric blockchain network has been setup before setting up this API.
 
 ## Configuration
 

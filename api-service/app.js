@@ -13,6 +13,7 @@ const Joi = require('joi');
 
 const helper = require('./utils/helper');
 
+
 const app = express();
 app.use(logger('dev'));
 app.use(express.json());
@@ -25,8 +26,18 @@ Joi.id = () => Joi.string().required();
 Joi.emailId = () => Joi.string().email().required();
 Joi.optionalId = () => Joi.string();
 Joi.roles = () => Joi.string().valid('manager', 'reviewer', 'copilot', 'member', 'client');
+Joi.operator = () => Joi.object().keys({
+  memberId: Joi.id(),
+  memberEmail: Joi.emailId(),
+  roles: Joi.array().items(Joi.roles()).required(),
+  permittedRoles: Joi.array().items(Joi.roles()).required()
+});
+
+
+
 
 const addRoutes = () => {
+  const auth = require('./utils/auth');
   _.each(require('./routes'), (verbs, path) => {
     _.each(verbs, (def, verb) => {
       const controllerPath = Path.join(__dirname, `./controllers/${def.controller}`);
@@ -39,6 +50,11 @@ const addRoutes = () => {
         req.signature = `${def.controller}#${def.method}`;
         next();
       });
+
+      if (def.auth) {
+        // check the auth
+        actions.push(auth.middleware(def.auth));
+      }
 
       // handler the multipart upload
       if (method.uploader) {
@@ -53,6 +69,13 @@ const addRoutes = () => {
 };
 
 addRoutes();
+
+// register the hook when challenge is completed
+app.on('ChallengeCompleted', (challenge) => {
+  console.log('Challenge : ' + challenge.challengeId + ' is completed. Here are the details: ');
+  console.log('Winners And prizes: ', JSON.stringify(challenge.winners.map(
+    w => {return {memberId: w.memberId, prize: w.prize}})));
+});
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
@@ -70,5 +93,16 @@ app.use(function(err, req, res, next) {
   res.status(payload.status);
   res.json(payload);
 });
+
+// set up the update job
+setInterval(async () => {
+  const phaseUpdater = require('./jobs/phaseUpdater');
+  try {
+    await phaseUpdater(app);
+  } catch (e) {
+    console.error(e);
+  }
+
+}, config.phaseCheckInterval * 1000);
 
 module.exports = app;
