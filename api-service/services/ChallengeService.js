@@ -499,138 +499,6 @@ createAppealResponse.schema = {
 };
 
 /**
- * Calculates the review score for a single review.
- * @param scorecard the scorecard.
- * @param review the review.
- * @returns {number} the number of the review.
- * @private
- */
-function __calculateReviewScoreForSingleReview(scorecard, review) {
-    const questionMappings = {};
-
-    for (let i = 0; i < scorecard.questions.length; i++) {
-        questionMappings[scorecard.questions[i].order] = scorecard.questions[i];
-    }
-
-    let sum = 0;
-    for (let i = 0; i < review.review.length; i++) {
-        const question = questionMappings[review.review[i].question];
-        if (!question) {
-            throw new errors.BadRequestError(
-                'cannot find question in scorecard with question order: ' + reviewQuestion.question);
-        }
-
-        let score = review.review[i].score;
-        if (review.review[i].appeal && !_.isNil(review.review[i].appeal.finalScore)) {
-            score = review.review[i].appeal.finalScore;
-        }
-
-        sum += question.weight * score;
-    }
-
-    return sum;
-}
-
-/**
- * Calculate the review scores.
- * @param scorecard the scorecard.
- * @param submission the submission.
- * @returns {number} the number of the review score.
- * @private
- */
-function __calculateReviewScore(scorecard, submission) {
-  let sum = 0;
-  let reviewCount = 0;
-
-  for(let i = 0; i < submission.reviews.length; i++) {
-    reviewCount++;
-    sum += __calculateReviewScoreForSingleReview(scorecard, submission.reviews[i]);    
-  }
-  
-  if (reviewCount === 0) {
-    return 0;
-  }
-  
-  return sum;
-}
-
-/**
- * Calculates a winner of the challenge.
- * @param challenge the challenge.
- * @returns {Array} the winners of the challenge.
- * @private
- */
-function __calculateChallengeWinners(challenge) {
-  // calculate the winners
-  let candidates = [];
-
-    for(let i = 0; i < challenge.submissions.length; i++) {
-        let score = __calculateReviewScore(challenge.scorecard, challenge.submissions[i]);
-
-        candidates.push({
-            memberId: challenge.submissions[i].memberId,
-            score,
-            timestamp: challenge.submissions[i].timestamp,
-            submission: {
-            submissionId: challenge.submissions[i].submissionId,
-            originalFileName: challenge.submissions[i].originalFileName,
-            fileName: challenge.submissions[i].fileName,
-            ipfsHash: challenge.submissions[i].ipfsHash,
-            timestamp: challenge.submissions[i].timestamp
-            }
-        });
-    }
-
-  candidates = candidates.sort((a, b) => {
-    // compare the scores then the timestamp
-    const d1 = new Date(a.timestamp).getTime();
-    const d2 = new Date(b.timestamp).getTime();
-    if (a.score < b.score) {
-      return 1;
-    } else if (a.score > b.score) {
-      return -1;
-    } else if (d1 < d2) {
-      return -1;
-    } else if (d1 > d2) {
-      return 1;
-    } else {
-      return 0;
-    }
-  });
-
-  const winners = [];
-  for (let i = 0; i < candidates.length && i < challenge.prizes.winners.length; i++) {
-    winners.push({
-      memberId: candidates[i].memberId,
-      score: candidates[i].score,
-      prize: challenge.prizes.winners[i],
-      submission: candidates[i].submission
-    });
-  }
-  return winners;
-}
-
-/**
- * On challenge completed.
- * @param app the application.
- * @param challengeId the challenge id.
- * @returns {Promise<void>} the result.
- * @private
- */
-async function __onChallengeCompleted(app, challengeId) {
-  // get the challenge from the challenge id
-  const challenge = await get(challengeId);
-
-  const client = await fabricService.getClientForOrg('Topcoder');
-  // copy the challenge to topcoder-client channel.
-  await fabricService.invokeChainCode(client, client.getChannel('topcoder-client'), 'topcoder-client', 'onChallengeCompleted',
-    [JSON.stringify(challenge)], true);
-
-  // trigger the challenge completed event
-  app.emit('ChallengeCompleted', challenge);
-}
-
-/**
  * Updates the challenge phase.
  * @param app the application.
  * @param challenge the challenge to update.
@@ -685,19 +553,25 @@ async function updateChallengePhase(app, challenge, phaseName) {
     currentPhase: phaseName,
     phases: phases
   };
+  
   if (phaseName === 'Completed') {
-    mutation.winners = __calculateChallengeWinners(challenge);
+    const client = await fabricService.getClientForOrg('Topcoder');
+    
+    await fabricService.invokeChainCode(client, client.getChannel('topcoder-review'),
+      'topcoder-review', 'calculateChallengeWinner', [challenge.challengeId], true);
   }
-  // use the system admin to update
+  
+  // // use the system admin to update
   const client = await fabricService.getClientForOrg('Topcoder');
   const result = await fabricService.invokeChainCode(client, client.getChannel('topcoder-review'),
     'topcoder-review', 'updateChallenge', [JSON.stringify(mutation)], true);
+  
   if (phaseName === 'Completed') {
-    // trigger the onCompleted jobs
-    await __onChallengeCompleted(app, challenge.challengeId);
+    const challengeWinner = await get(challenge.challengeId);
+    app.emit('ChallengeCompleted', challengeWinner);
   }
+  
   return result;
-
 }
 
 /**

@@ -119,21 +119,25 @@ const handleAppealPhase = async (challenge) => {
 const handleAppealResponsePhase = async (challenge) => {
     const phase = __getPhaseInfo(challenge, 'Completed');
     if (new Date(phase.startDate).getTime() < new Date().getTime()) {
-        let ok = true;
+      let ok = true;
 
+      if(challenge.submissions) {
         for(let i = 0; i < challenge.submissions.length; i++) {
-            for(let j = 0; j < challenge.submissions[i].reviews.length; j++) {
-                if(challenge.submissions[i].reviews[j].appeal) {
-                    if (!review.appeal.appealResponse || _.isNil(review.appeal.finalScore)) {
-                        ok = false;
-                    }    
-                }
-            }
+          for(let j = 0; j < challenge.submissions[i].reviews.length; j++) {
+              if(challenge.submissions[i].reviews[j].appeal) {
+                  if (!review.appeal.appealResponse || _.isNil(review.appeal.finalScore)) {
+                      ok = false;
+                  }    
+              }
+          }
         }
+      } else {
+        ok = false;
+      }
 
-        if (ok) {
-            await __updateChallengePhase(challenge, 'Completed');
-        }
+      if (ok) {
+        await __updateChallengePhase(challenge, 'Completed');
+      }   
     }
 };
 

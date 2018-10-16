@@ -327,6 +327,127 @@ let Chaincode = class {
   }
 
   /**
+   * Calculates the review score for a single review.
+   * @param scorecard the scorecard.
+   * @param review the review.
+   * @returns {number} the number of the review.
+   * @private
+   */
+  __calculateReviewScoreForSingleReview(scorecard, review) {
+    const questionMappings = {};
+
+    for (let i = 0; i < scorecard.questions.length; i++) {
+        questionMappings[scorecard.questions[i].order] = scorecard.questions[i];
+    }
+
+    let sum = 0;
+    for (let i = 0; i < review.review.length; i++) {
+        const question = questionMappings[review.review[i].question];
+        if (!question) {
+            throw new errors.BadRequestError(
+                'cannot find question in scorecard with question order: ' + reviewQuestion.question);
+        }
+
+        let score = review.review[i].score;
+        if (review.review[i].appeal && !_.isNil(review.review[i].appeal.finalScore)) {
+            score = review.review[i].appeal.finalScore;
+        }
+
+        sum += question.weight * score;
+    }
+
+    return sum;
+  }
+
+  /**
+  * Calculate the review scores.
+  * @param scorecard the scorecard.
+  * @param submission the submission.
+  * @returns {number} the number of the review score.
+  * @private
+  */
+  __calculateReviewScore(scorecard, submission) {
+    let sum = 0;
+    let reviewCount = 0;
+
+    for(let i = 0; i < submission.reviews.length; i++) {
+      reviewCount++;
+      sum += this.__calculateReviewScoreForSingleReview(scorecard, submission.reviews[i]);    
+    }
+
+    if (reviewCount === 0) {
+      return 0;
+    }
+
+    return sum;
+  }
+
+  /**
+   * Calculate winner for a challenge
+   * @param stub the stub.
+   * @param args the arguments.
+   * @returns {Promise<*>} the winner.
+   */
+  async calculateChallengeWinner(stub, args) {
+    if (args.length !== 1) {
+      throw new errors.BadRequestError('Incorrect number of arguments. Expecting 1 (for payload)');
+    }
+
+    const {project, challenge} = await this.__getProjectChallenge(stub, args[0]);
+    if (!challenge) {
+      throw new errors.BadRequestError('challenge does not exists with id: ' + args[0]);
+    }
+
+    let candidates = [];
+    for(let i = 0; i < challenge.submissions.length; i++) {
+        let score = this.__calculateReviewScore(challenge.scorecard, challenge.submissions[i]);
+
+        candidates.push({
+            memberId: challenge.submissions[i].memberId,
+            score,
+            timestamp: challenge.submissions[i].timestamp,
+            submission: {
+            submissionId: challenge.submissions[i].submissionId,
+            originalFileName: challenge.submissions[i].originalFileName,
+            fileName: challenge.submissions[i].fileName,
+            ipfsHash: challenge.submissions[i].ipfsHash,
+            timestamp: challenge.submissions[i].timestamp
+            }
+        });
+    }
+
+    candidates = candidates.sort((a, b) => {
+      // compare the scores then the timestamp
+      const d1 = new Date(a.timestamp).getTime();
+      const d2 = new Date(b.timestamp).getTime();
+      if (a.score < b.score) {
+        return 1;
+      } else if (a.score > b.score) {
+        return -1;
+      } else if (d1 < d2) {
+        return -1;
+      } else if (d1 > d2) {
+        return 1;
+      } else {
+        return 0;
+      }
+    });
+
+    const winners = [];
+    for (let i = 0; i < candidates.length && i < challenge.prizes.winners.length; i++) {
+      winners.push({
+        memberId: candidates[i].memberId,
+        score: candidates[i].score,
+        prize: challenge.prizes.winners[i],
+        submission: candidates[i].submission
+      });
+    }
+    
+    challenge.winners = winners;
+    return await this.__saveProject(stub, project);
+  }
+
+  /**
    * Registers a challenge.
    * @param stub the stub.
    * @param args the arguments.
@@ -555,7 +676,6 @@ let Chaincode = class {
 
     return await this.__saveProject(stub, project);
   }
-
 
   /**
    * Finds the questions in a challenge review.
@@ -859,7 +979,6 @@ let Chaincode = class {
     return challenge;
   }
 
-
   /**
    * Gets all the on going challenges.
    * @param stub the stub.
@@ -879,6 +998,7 @@ let Chaincode = class {
     });
     return challenges;
   }
+
   /**
    * Gets the project.
    * @param stub the stub.
