@@ -15,7 +15,7 @@
     "get-parameter-names": "^0.3.0",
     "http-errors": "~1.6.2",
     "joi": "^13.5.2",
-    "lodash": "^4.17.10",
+    "lodash": "^4.17.21",
     "morgan": "~1.9.0",
     "pug": "2.0.0-beta11"
   }
