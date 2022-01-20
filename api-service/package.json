@@ -11,7 +11,7 @@
     "debug": "~2.6.9",
     "express": "~4.16.0",
     "fabric-ca-client": "^1.2.1",
-    "fabric-client": "^1.2.1",
+    "fabric-client": "^1.4.19",
     "get-parameter-names": "^0.3.0",
     "http-errors": "~1.6.2",
     "joi": "^13.5.2",
